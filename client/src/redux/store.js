@@ -1,3 +1,4 @@
+
 import { configureStore } from "@reduxjs/toolkit";
 import {
   persistStore,
@@ -21,7 +22,7 @@ const persistConfig = {
 const persistedReducer = persistReducer(persistConfig, state);
 
 export const store = configureStore({
-  reducer: persistedReducer,
+  reducer: persistedReducer,window: window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {

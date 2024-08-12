@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import "../styles/Login.scss"
 import { setLogin } from "../redux/state";
 import { useDispatch } from "react-redux"
-
 import { useNavigate } from "react-router-dom"
 
 const LoginPage = () => {
@@ -27,14 +26,16 @@ const LoginPage = () => {
 
       /* Get data after fetching */
       const loggedIn = await response.json()
-
+      console.log("Logged in data:", loggedIn); // ye le
       if (loggedIn) {
         dispatch (
           setLogin({
             user: loggedIn.user,
             token: loggedIn.token
+            
           })
         )
+        
         navigate("/")
       }
 
