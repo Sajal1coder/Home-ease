@@ -1,48 +1,47 @@
 import React, { useState } from "react";
-import "../styles/Login.scss"
+import "../styles/Login.scss";
 import { setLogin } from "../redux/state";
-import { useDispatch } from "react-redux"
-import { useNavigate } from "react-router-dom"
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const dispatch = useDispatch()
-
-  const navigate = useNavigate()
+  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     try {
-      const response = await fetch ("http://localhost:3001/auth/login", {
+      const res = await fetch("http://localhost:3001/auth/login", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password })
-      })
+        body: JSON.stringify({ email, password }),
+      });
 
-      /* Get data after fetching */
-      const loggedIn = await response.json()
-      console.log("Logged in data:", loggedIn); // ye le
-      if (loggedIn) {
-        dispatch (
+      const loggedIn = await res.json();
+
+      if (res.ok) {
+        setError(null);
+        dispatch(
           setLogin({
             user: loggedIn.user,
-            token: loggedIn.token
-            
+            token: loggedIn.token,
           })
-        )
-        
-        navigate("/")
+        );
+        navigate("/");
+      } else {
+        setError(loggedIn.message);
       }
-
-    } catch (err) {
-      console.log("Login failed", err.message)
+    } catch (error) {
+      console.log("Login failed", error.message);
+      setError("An error occurred. Please try again.");
     }
-  }
+  };
 
   return (
     <div className="login">
@@ -64,7 +63,8 @@ const LoginPage = () => {
           />
           <button type="submit">LOG IN</button>
         </form>
-        <a href="/register">Don't have an account? Sign In Here</a>
+        <a href="/register">Don't have an account? Sign Up Here</a>
+        {error && <p className="text-red-500 mt-5">{error}</p>}
       </div>
     </div>
   );

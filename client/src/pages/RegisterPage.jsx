@@ -13,6 +13,7 @@ const RegisterPage = () => {
   });
 
   const handleChange = (e) => {
+    
     const { name, value, files } = e.target;
     setFormData({
       ...formData,
@@ -45,12 +46,12 @@ const RegisterPage = () => {
       })
 
       if (response.ok) {
-        navigate("/login")
+        navigate("/login");
       }
     } catch (err) {
       console.log("Registration failed", err.message)
     }
-  }
+  };
 
   return (
     <div className="register">
@@ -120,7 +121,9 @@ const RegisterPage = () => {
               style={{ maxWidth: "80px" }}
             />
           )}
-          <button type="submit" disabled={!passwordMatch}>REGISTER</button>
+          <button type="submit" disabled={!passwordMatch}>
+          REGISTER
+          </button>
         </form>
         <a href="/login">Already have an account? Log In Here</a>
       </div>
