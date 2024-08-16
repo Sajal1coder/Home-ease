@@ -93,6 +93,20 @@ const CreateListing = () => {
     });
   };
 
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+
+  const handleUploadPDF = (e) => {
+    const newFiles = e.target.files;
+    setUploadedFiles((prevFiles) => [...prevFiles, ...newFiles]);
+  };
+
+  const handleRemovePDF = (indexToRemove) => {
+    setUploadedFiles((prevFiles) =>
+      prevFiles.filter((_, index) => index !== indexToRemove)
+    );
+  };
+
+
   const creatorId = useSelector((state) => state.user._id);
 
   const navigate = useNavigate();
@@ -109,8 +123,8 @@ const CreateListing = () => {
       listingForm.append("streetAddress", formLocation.streetAddress);
       listingForm.append("aptSuite", formLocation.aptSuite);
       listingForm.append("city", formLocation.city);
-      listingForm.append("State", formLocation.province);
-      listingForm.append("Country", formLocation.country);
+      listingForm.append("province", formLocation.province);
+      listingForm.append("country", formLocation.country);
       listingForm.append("guestCount", guestCount);
       listingForm.append("bedroomCount", bedroomCount);
       listingForm.append("bedCount", bedCount);
@@ -127,6 +141,11 @@ const CreateListing = () => {
         listingForm.append("listingPhotos", photo);
       });
 
+      /* Append PDF files */
+      uploadedFiles.forEach((file) => {
+        listingForm.append("govtID", file);
+      });
+
       /* Send a POST request to server */
       const response = await fetch("http://localhost:3001/properties/create", {
         method: "POST",
@@ -136,7 +155,6 @@ const CreateListing = () => {
       if (response.ok) {
         navigate("/");
       }
-      
     } catch (err) {
       console.log("Publish Listing failed", err.message);
     }
@@ -155,9 +173,8 @@ const CreateListing = () => {
             <div className="category-list">
               {categories?.map((item, index) => (
                 <div
-                  className={`category ${
-                    category === item.label ? "selected" : ""
-                  }`}
+                  className={`category ${category === item.label ? "selected" : ""
+                    }`}
                   key={index}
                   onClick={() => setCategory(item.label)}
                 >
@@ -358,7 +375,28 @@ const CreateListing = () => {
                   />
                 </div>
               </div>
+              <h3>Upload Government ID</h3>
+              <div className="basic">
+                {uploadedFiles.map((file, index) => (
+                  <div key={index} className="pdf-file">
+                    <p>{file.name}</p>
+                    <button type="button" onClick={() => handleRemovePDF(index)}>
+                      <BiTrash />
+                    </button>
+                  </div>
+                ))}
+                <input
+                  id="file-upload"
+                  type="file"
+                  
+                  accept=".pdf"
+                  onChange={handleUploadPDF}
+                  multiple
+                />
+                
+              </div>
             </div>
+
           </div>
 
           <div className="create-listing_step2">
@@ -369,9 +407,8 @@ const CreateListing = () => {
             <div className="amenities">
               {facilities?.map((item, index) => (
                 <div
-                  className={`facility ${
-                    amenities.includes(item.name) ? "selected" : ""
-                  }`}
+                  className={`facility ${amenities.includes(item.name) ? "selected" : ""
+                    }`}
                   key={index}
                   onClick={() => handleSelectAmenities(item.name)}
                 >
@@ -499,7 +536,7 @@ const CreateListing = () => {
                 onChange={handleChangeDescription}
                 required
               />
-              <p>Now, set your PRICE</p>
+              <p>Set your PRICE</p>
               <span>$</span>
               <input
                 type="number"
