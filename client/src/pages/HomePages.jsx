@@ -1,13 +1,18 @@
-import React from 'react'
-import Navbar from '../component/Navbar'
+import Categories from "../components/Categories"
+import Navbar from "../components/Navbar"
+import Slide from '../components/Slide'
 
-const HomePages = () => {
+
+const HomePage = () => {
   return (
     <>
-      <Navbar/>
+      <Navbar />
+      <Slide />
+      <Categories/>
+      
+      
     </>
   )
 }
 
-export default HomePages
-
+export default HomePage
