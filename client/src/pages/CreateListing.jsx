@@ -243,10 +243,10 @@ const CreateListing = () => {
 
             <div className="half">
               <div className="location">
-                <p>Province</p>
+                <p>State</p>
                 <input
                   type="text"
-                  placeholder="Province"
+                  placeholder="State"
                   name="province"
                   value={formLocation.province}
                   onChange={handleChangeLocation}
@@ -441,7 +441,7 @@ const CreateListing = () => {
                           <div className="icon">
                             <IoIosImages />
                           </div>
-                          <p>Upload from your device</p>
+                          <p>Upload from your device(Accepted file type: .png and .jpeg)</p>
                         </label>
                       </>
                     )}
@@ -537,7 +537,7 @@ const CreateListing = () => {
                 required
               />
               <p>Set your PRICE</p>
-              <span>$</span>
+              <span>₹</span>
               <input
                 type="number"
                 placeholder="100"

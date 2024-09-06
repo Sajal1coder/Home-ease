@@ -6,7 +6,7 @@ const cors = require("cors");
 
 const authRoutes=require("./routes/auth.js")
 const listingRoutes = require("./routes/listing.js")
-app.use(cors());
+app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(express.json());
 app.use(express.static("public"));
 
