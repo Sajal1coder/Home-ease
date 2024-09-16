@@ -136,6 +136,9 @@
         @include lg {
           max-width: 300px;
         }
+        &:disabled{
+          background-color: $grey;
+        }
       }
     }
   }

@@ -51,27 +51,20 @@ const ListingDetails = () => {
     setDateRange([ranges.selection]);
   };
 
+  // Calculate the number of months
   const start = new Date(dateRange[0].startDate);
   const end = new Date(dateRange[0].endDate);
+  const monthCount = end.getMonth() - start.getMonth() + (12 * (end.getFullYear() - start.getFullYear()));
 
-  const diffInMonths = (end.getFullYear() - start.getFullYear()) * 12 + end.getMonth() - start.getMonth();
-  const totalDays = Math.round((end - start) / (1000 * 60 * 60 * 24));
-  const startDate = start.getDate();
-  const endDate = end.getDate();
+  // Calculate the remaining days
+  const remainingDays = (end.getTime() - start.getTime()) % (30 * 24 * 60 * 60 * 1000); // Assuming 30 days in a month
+  const remainingDaysInMonths = Math.ceil(remainingDays / (30 * 24 * 60 * 60 * 1000)); // Convert remaining days to months
 
-  // Calculate the number of full months and extra days
-  const fullMonths = Math.floor(diffInMonths);
-  const extraDays = endDate - startDate;
-
-  // Adjust fullMonths for partial month
-  const isPartialMonth = (extraDays > 0 && endDate > startDate) || (totalDays % 30 !== 0);
-  const totalMonths = fullMonths + (isPartialMonth ? 1 : 0);
-
-  // Calculate the total price
-  const totalPrice = listing.price * totalMonths;
+  // Update monthCount if there are remaining days
+  const updatedMonthCount = monthCount + remainingDaysInMonths;
 
   useEffect(() => {
-    if (totalMonths < 1) {
+    if (monthCount < 1) {
       setError("Bookings must be at least 1 month long.");
     } else {
       setError("");
@@ -80,10 +73,11 @@ const ListingDetails = () => {
 
   /* SUBMIT BOOKING */
   const customerId = useSelector((state) => state?.user?._id);
+
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
-    if (totalMonths < 1) return; // Prevent submission if invalid
+    if (updatedMonthCount < 1) return; // Prevent submission if invalid
 
     try {
       const bookingForm = {
@@ -92,7 +86,7 @@ const ListingDetails = () => {
         hostId: listing.creator._id,
         startDate: dateRange[0].startDate.toDateString(),
         endDate: dateRange[0].endDate.toDateString(),
-        totalPrice,
+        totalPrice: listing.price * updatedMonthCount,
       };
 
       const response = await fetch("http://localhost:3001/bookings/create", {
@@ -186,23 +180,19 @@ const ListingDetails = () => {
             <div className="date-range-calendar">
               <DateRange ranges={dateRange} onChange={handleSelect} />
               <h2>
-                ₹{listing.price} x {totalMonths}{" "}
-                {totalMonths > 1 ? "months" : "month"}
+                ${listing.price} x {updatedMonthCount}{" "}
+                {updatedMonthCount > 1 ? "months" : "month"}
               </h2>
-              <h2>Total price: ₹{totalPrice}</h2>
-              <p>Start Date: {dateRange[0].startDate.toDateString()}</p>
-              <p>End Date: {dateRange[0].endDate.toDateString()}</p>
-
+              <h2>Total price: ${listing.price * updatedMonthCount}</h2>
+              <p>Start Date: {dateRange[0].startDate.toLocaleDateString()}</p>
+              <p>End Date: {dateRange[0].endDate.toLocaleDateString()}</p>
               {error && <p className="error-message">{error}</p>} {/* Display error message */}
-
               <button
-                className="button"
-                type="submit"
-                onClick={handleSubmit}
-                disabled={totalMonths < 1} // Disable button if booking is invalid
-              >
-                BOOKING
-              </button>
+            className="button"
+            type="submit"
+            onClick={handleSubmit}
+            disabled={monthCount < 1} // Disable button if booking is invalid
+          >Book Now</button>
             </div>
           </div>
         </div>
