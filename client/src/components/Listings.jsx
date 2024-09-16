@@ -1,0 +1,133 @@
+import { useEffect, useState } from "react";
+import { categories } from "../data";
+import "../styles/Listings.scss";
+import ListingCard from "./ListingCard";
+import Loader from "./Loader";
+import { useDispatch, useSelector } from "react-redux";
+import { setListings } from "../redux/state";
+
+const Listings = () => {
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [sortOrder, setSortOrder] = useState("lowToHigh");
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(1000000);
+  const listings = useSelector((state) => state.listings);
+
+  const getFeedListings = async () => {
+    try {
+      const response = await fetch(
+        selectedCategory !== "All"
+          ? `http://localhost:3001/properties?category=${selectedCategory}`
+          : "http://localhost:3001/properties",
+        {
+          method: "GET",
+        }
+      );
+
+      const data = await response.json();
+      dispatch(setListings({ listings: data }));
+      setLoading(false);
+    } catch (err) {
+      console.log("Fetch Listings Failed", err.message);
+    }
+  };
+
+  useEffect(() => {
+    getFeedListings();
+  }, [selectedCategory]);
+
+  const filteredListings = listings.filter(
+    (listing) => listing.price >= minPrice && listing.price <= maxPrice
+  );
+
+  const sortedListings = [...filteredListings].sort((a, b) => {
+    if (sortOrder === "lowToHigh") {
+      return a.price - b.price;
+    } else {
+      return b.price - a.price;
+    }
+  });
+
+
+  return (
+    <>
+      <div className="category-list">
+        {categories?.map((category, index) => (
+          <div
+            className={`category ${category.label === selectedCategory ? "selected" : ""}`}
+            key={index}
+            onClick={() => setSelectedCategory(category.label)}
+          >
+
+          <p>{category.label}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="sort-options">
+        <label>Sort options:</label>
+        <select  className="sele" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
+          <option value="lowToHigh">Price: Low to High</option>
+          <option value="highToLow">Price: High to Low</option>
+        </select>
+
+        <div className="price-range">
+        <label>Min Price: ₹{minPrice}</label>
+        <input
+          type="range"
+          min="0"
+          max="10000"
+          value={minPrice}
+          onChange={(e) => setMinPrice(e.target.value)}
+        />
+        <label>Max Price: ₹{maxPrice}</label>
+        <input
+          type="range"
+          min="0"
+          max="100000"
+          value={maxPrice}
+          onChange={(e) => setMaxPrice(e.target.value)}
+        />
+      </div>
+      </div>
+
+      {loading ? (
+        <Loader />
+      ) : (
+        <div className="listings">
+          {sortedListings.map(
+            ({
+              _id,
+              creator,
+              listingPhotoPaths,
+              city,
+              province,
+              country,
+              category,
+              type,
+              price,
+              booking = false
+            }) => (
+              <ListingCard
+                listingId={_id}
+                creator={creator}
+                listingPhotoPaths={listingPhotoPaths}
+                city={city}
+                province={province}
+                country={country}
+                category={category}
+                type={type}
+                price={price}
+                booking={booking}
+              />
+            )
+          )}
+        </div>
+      )}
+    </>
+  );
+};
+
+export default Listings;
