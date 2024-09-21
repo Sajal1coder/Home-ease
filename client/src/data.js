@@ -1,16 +1,5 @@
-import { TbBeach, TbMountain, TbPool } from "react-icons/tb";
+
 import {
-  GiBarn,
-  GiBoatFishing,
-  GiCactus,
-  GiCastle,
-  GiCaveEntrance,
-  GiForestCamp,
-  GiIsland,
-  GiWindmill,
-} from "react-icons/gi";
-import {
-  FaSkiing,
   FaPumpSoap,
   FaShower,
   FaFireExtinguisher,
@@ -27,8 +16,8 @@ import {
   BiWorld,
 } from "react-icons/bi";
 import { BsSnow, BsFillDoorOpenFill, BsPersonWorkspace } from "react-icons/bs";
-import { IoDiamond } from "react-icons/io5";
-import { MdOutlineVilla, MdMicrowave, MdBalcony, MdYard, MdPets } from "react-icons/md";
+
+import { MdMicrowave, MdBalcony, MdYard, MdPets } from "react-icons/md";
 import {
   PiBathtubFill,
   PiCoatHangerFill,
@@ -45,7 +34,9 @@ import {
 import { AiFillCar } from "react-icons/ai";
 
 export const categories = [
-  
+  {
+    label: "All",
+  },
   {
     img: "assets/mumbai.jpg",
     label: "Mumbai",

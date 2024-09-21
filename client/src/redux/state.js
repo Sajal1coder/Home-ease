@@ -2,7 +2,7 @@ import { createSlice} from "@reduxjs/toolkit"
 
 const initialState = {
   user: null,
-  token: null
+  token: null,
 }
 
 export const userSlice = createSlice({
@@ -20,6 +20,9 @@ export const userSlice = createSlice({
     setListings: (state, action) => {
       state.listings = action.payload.listings
     },
+    setCategory: (state, action) => {
+      state.selectedCategory = action.payload;
+    },
     setTripList: (state, action) => {
       state.user.tripList = action.payload
     },
@@ -31,9 +34,22 @@ export const userSlice = createSlice({
     },
     setReservationList: (state, action) => {
       state.user.reservationList = action.payload
+    },
+    setSortOrder:(state,action)=>{
+      state.sortOrder = action.payload
+    },
+    setMinPrice:(state,action)=>{
+      state.minPrice = action.payload
+    },
+    setMaxPrice:(state,action)=>{
+      state.maxPrice = action.payload
+    },
+    setLoading: (state, action) => {
+      state.loading = action.payload;
     }
   }
 })
 
-export const { setLogin, setLogout, setListings, setTripList, setWishList, setPropertyList, setReservationList } = userSlice.actions
+
+export const { setLogin, setLogout, setListings, setTripList, setWishList, setPropertyList, setReservationList , setSortOrder, setMaxPrice, setMinPrice , setCategory ,setLoading} = userSlice.actions
 export default userSlice.reducer

@@ -159,6 +159,13 @@ const CreateListing = () => {
       console.log("Publish Listing failed", err.message);
     }
   };
+
+  const includedCategories = ["Mumbai", "Delhi", "Bangalore","Kolkata","Lucknow","Hydrabad","Pune","Chennai","Ahmedabad","Chandigarh","Bhopal","Guwahati","Jaipur","Surat","Varanasi","Any Other"]; // Add the categories you want to include
+
+  const filtered = categories.filter((category) => 
+    includedCategories.includes(category.label)
+  );
+
   return (
     <>
       <Navbar />
@@ -171,7 +178,7 @@ const CreateListing = () => {
             <hr />
             <h3>Which of these categories best describes your place?</h3>
             <div className="category-list">
-              {categories?.map((item, index) => (
+              {filtered?.map((item, index) => (
                 <div
                   className={`category ${category === item.label ? "selected" : ""
                     }`}

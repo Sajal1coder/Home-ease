@@ -3,6 +3,12 @@ import "../styles/Categories.scss"
 import { Link } from "react-router-dom";
 
 const Categories = () => {
+
+  const includedCategories = ["Mumbai", "Delhi", "Bangalore","Kolkata","Lucknow","Hydrabad","Pune","Chennai","Ahmedabad","Chandigarh","Bhopal","Guwahati","Jaipur","Surat","Varanasi","Any Other"]; // Add the categories you want to include
+
+  const filtered = categories.filter((category) => 
+    includedCategories.includes(category.label)
+  );
   return (
     <div className="categories">
       <h1>Explore Top Categories</h1>
@@ -11,7 +17,7 @@ const Categories = () => {
       </p>
 
       <div className="categories_list">
-        {categories?.slice(0,7).map((category, index) => (
+        {filtered?.slice(0,7).map((category, index) => (
           <Link to={`/properties/category/${category.label}`}>
             <div className="category" key={index}>
               <img src={category.img} alt={category.label} />

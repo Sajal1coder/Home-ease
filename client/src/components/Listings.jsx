@@ -4,15 +4,16 @@ import "../styles/Listings.scss";
 import ListingCard from "./ListingCard";
 import Loader from "./Loader";
 import { useDispatch, useSelector } from "react-redux";
-import { setListings } from "../redux/state";
+import { setListings, setCategory, setSortOrder, setMinPrice, setMaxPrice ,setLoading} from "../redux/state"; // Import Redux actions
 
 const Listings = () => {
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [sortOrder, setSortOrder] = useState("lowToHigh");
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(1000000);
+
+  const loading = useSelector((state) => state.loading);
+  const selectedCategory = useSelector((state) => state.selectedCategory || 'All');
+  const sortOrder = useSelector((state) => state.sortOrder || 'lowToHigh');
+  const minPrice = useSelector((state) => state.minPrice||0);
+  const maxPrice = useSelector((state) => state.maxPrice||1000000);
   const listings = useSelector((state) => state.listings);
 
   const getFeedListings = async () => {
@@ -50,47 +51,53 @@ const Listings = () => {
     }
   });
 
+  
 
   return (
     <>
       <div className="category-list">
-        {categories?.map((category, index) => (
+        { categories?.map((category, index) => (
           <div
-            className={`category ${category.label === selectedCategory ? "selected" : ""}`}
+            className={`category ${
+              category.label === selectedCategory ? "selected" : ""
+            }`}
             key={index}
-            onClick={() => setSelectedCategory(category.label)}
+            onClick={() => dispatch(setCategory(category.label))} // Dispatch category change to Redux
           >
-
-          <p>{category.label}</p>
+            <p>{category.label}</p>
           </div>
         ))}
       </div>
 
       <div className="sort-options">
         <label>Sort options:</label>
-        <select  className="sele" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
+        <select
+          className="sele"
+          value={sortOrder}
+          onChange={(e) => dispatch(setSortOrder(e.target.value))} // Dispatch sort order change
+        >
           <option value="lowToHigh">Price: Low to High</option>
           <option value="highToLow">Price: High to Low</option>
         </select>
 
         <div className="price-range">
-        <label>Min Price: ₹{minPrice}</label>
-        <input
-          type="range"
-          min="0"
-          max="10000"
-          value={minPrice}
-          onChange={(e) => setMinPrice(e.target.value)}
-        />
-        <label>Max Price: ₹{maxPrice}</label>
-        <input
-          type="range"
-          min="0"
-          max="100000"
-          value={maxPrice}
-          onChange={(e) => setMaxPrice(e.target.value)}
-        />
-      </div>
+          <label>Min Price: ₹{minPrice}</label>
+          <input
+            type="range"
+            min="0"
+            max="10000"
+            value={minPrice}
+            onChange={(e) => dispatch(setMinPrice(e.target.value))} // Dispatch min price change
+          />
+          <label>Max Price: ₹{maxPrice}</label>
+          <input
+            type="range"
+            min="0"
+            max="100000"
+            value={maxPrice}
+            onChange={(e) => dispatch(setMaxPrice(e.target.value))} // Dispatch max price change
+          />
+        </div>
       </div>
 
       {loading ? (
@@ -108,9 +115,10 @@ const Listings = () => {
               category,
               type,
               price,
-              booking = false
+              booking = false,
             }) => (
               <ListingCard
+                key={_id}
                 listingId={_id}
                 creator={creator}
                 listingPhotoPaths={listingPhotoPaths}
