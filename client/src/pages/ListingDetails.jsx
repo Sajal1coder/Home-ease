@@ -180,10 +180,10 @@ const ListingDetails = () => {
             <div className="date-range-calendar">
               <DateRange ranges={dateRange} onChange={handleSelect} />
               <h2>
-                ${listing.price} x {updatedMonthCount}{" "}
+                ₹{listing.price} x {updatedMonthCount}{" "}
                 {updatedMonthCount > 1 ? "months" : "month"}
               </h2>
-              <h2>Total price: ${listing.price * updatedMonthCount}</h2>
+              <h2>Total price: ₹{listing.price * updatedMonthCount}</h2>
               <p>Start Date: {dateRange[0].startDate.toLocaleDateString()}</p>
               <p>End Date: {dateRange[0].endDate.toLocaleDateString()}</p>
               {error && <p className="error-message">{error}</p>} {/* Display error message */}

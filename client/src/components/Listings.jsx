@@ -14,7 +14,7 @@ const Listings = () => {
   const sortOrder = useSelector((state) => state.sortOrder || 'lowToHigh');
   const minPrice = useSelector((state) => state.minPrice||0);
   const maxPrice = useSelector((state) => state.maxPrice||1000000);
-  const listings = useSelector((state) => state.listings);
+  const listings = useSelector((state) => state.listings)||[];
 
   const getFeedListings = async () => {
     try {
