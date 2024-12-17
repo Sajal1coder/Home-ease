@@ -10,10 +10,16 @@ import Loader from "../components/Loader";
 import Navbar from "../components/Navbar";
 import { useSelector } from "react-redux";
 import Footer from "../components/Footer";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import CheckoutForm from "../components/CheckoutForm";
+
+const stripePromise = loadStripe("pk_test_51QX1mlBiDoQ4NR3uCudfr8EIQ0tUirxoTt04YgxPffEektoFmZJuM9VefA5BoFwzfyPlLmmCzP03p35GaQC3rLLg00T6lPag4m");
 
 const ListingDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(""); // State for error message
+  const [isBooking, setIsBooking] = useState(false);
   const [dateRange, setDateRange] = useState([
     {
       startDate: new Date(),
@@ -76,7 +82,7 @@ const ListingDetails = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (token) => {
     if (updatedMonthCount < 1) return; // Prevent submission if invalid
 
     try {
@@ -87,6 +93,7 @@ const ListingDetails = () => {
         startDate: dateRange[0].startDate.toDateString(),
         endDate: dateRange[0].endDate.toDateString(),
         totalPrice: listing.price * updatedMonthCount,
+        token,
       };
 
       const response = await fetch("http://localhost:3001/bookings/create", {
@@ -187,12 +194,12 @@ const ListingDetails = () => {
               <p>Start Date: {dateRange[0].startDate.toLocaleDateString()}</p>
               <p>End Date: {dateRange[0].endDate.toLocaleDateString()}</p>
               {error && <p className="error-message">{error}</p>} {/* Display error message */}
-              <button
-            className="button"
-            type="submit"
-            onClick={handleSubmit}
-            disabled={monthCount < 1} // Disable button if booking is invalid
-          >Book Now</button>
+              <br></br>
+              <Elements stripe={stripePromise}>
+          <CheckoutForm handleBooking={handleSubmit} monthCount={updatedMonthCount}/>
+        </Elements>
+        {isBooking && <p>Processing Booking...</p>}
+              
             </div>
           </div>
         </div>
