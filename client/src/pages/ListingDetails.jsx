@@ -14,7 +14,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "../components/CheckoutForm";
 
-const stripePromise = loadStripe(api_key);
+const stripePromise = loadStripe(process.env.STRIPE_PUBLISHABLE_KEY);
 
 const ListingDetails = () => {
   const [loading, setLoading] = useState(true);
