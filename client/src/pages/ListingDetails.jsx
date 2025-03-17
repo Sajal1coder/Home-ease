@@ -34,7 +34,7 @@ const ListingDetails = () => {
   const getListingDetails = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3001/properties/${listingId}`,
+        `https://home-ease-three.vercel.app/properties/${listingId}`,
         {
           method: "GET",
         }
