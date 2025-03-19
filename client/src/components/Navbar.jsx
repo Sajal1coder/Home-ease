@@ -61,7 +61,7 @@ const Navbar = () => {
   ) : (
     user.profileImagePath && (
       <img
-        src={`https://home-ease-three.vercel.app/${user.profileImagePath.replace(
+        src={`https://home-easy-green.vercel.app/${user.profileImagePath.replace(
           "public",
           ""
         )}`}

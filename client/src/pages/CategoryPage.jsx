@@ -18,7 +18,7 @@ const CategoryPage = () => {
   const getFeedListings = async () => {
     try {
       const response = await fetch(
-          `https://home-ease-three.vercel.app/properties?category=${category}`,
+          `https://home-easy-green.vercel.app/properties?category=${category}`,
         {
           method: "GET",
         }

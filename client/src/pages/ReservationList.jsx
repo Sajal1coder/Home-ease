@@ -17,7 +17,7 @@ const ReservationList = () => {
   const getReservationList = async () => {
     try {
       const response = await fetch(
-        `https://home-ease-three.vercel.app/users/${userId}/reservations`,
+        `https://home-easy-green.vercel.app/users/${userId}/reservations`,
         {
           method: "GET",
         }

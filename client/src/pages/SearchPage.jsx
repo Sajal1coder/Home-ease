@@ -17,7 +17,7 @@ const SearchPage = () => {
 
   const getSearchListings = async () => {
     try {
-      const response = await fetch(`https://home-ease-three.vercel.app/properties/search/${search}`, {
+      const response = await fetch(`https://home-easy-green.vercel.app/properties/search/${search}`, {
         method: "GET"
       })
 

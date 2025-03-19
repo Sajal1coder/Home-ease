@@ -147,7 +147,7 @@ const CreateListing = () => {
       });
 
       /* Send a POST request to server */
-      const response = await fetch("https://home-ease-three.vercel.app/properties/create", {
+      const response = await fetch("https://home-easy-green.vercel.app/properties/create", {
         method: "POST",
         body: listingForm,
       });

@@ -15,7 +15,7 @@ const LoginPage = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("https://home-ease-three.vercel.app/auth/login", {
+      const res = await fetch("https://home-easy-green.vercel.app/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
