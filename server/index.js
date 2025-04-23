@@ -9,7 +9,9 @@ const listingRoutes = require("./routes/listing.js")
 const BookingRoutes=require("./routes/booking.js")
 const userRoutes=require("./routes/user.js")
 
-app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(cors({
+  origin: ["http://localhost:3000", "https://homease-taupe.vercel.app"]
+}));
 app.use(express.json());
 app.use(express.static("public"));
 
