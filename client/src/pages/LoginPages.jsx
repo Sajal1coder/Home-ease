@@ -15,7 +15,7 @@ const LoginPage = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:3001/auth/login", {
+      const res = await fetch("https://home-ease-backend.onrender.com/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

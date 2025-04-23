@@ -61,7 +61,7 @@ const Navbar = () => {
   ) : (
     user.profileImagePath && (
       <img
-        src={`http://localhost:3001/${user.profileImagePath.replace(
+        src={`https://home-ease-backend.onrender.com/${user.profileImagePath.replace(
           "public",
           ""
         )}`}

@@ -14,7 +14,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "../components/CheckoutForm";
 
-const stripePromise = loadStripe(process.env.STRIPE_PUBLISHABLE_KEY);
+const stripePromise = loadStripe('pk_test_51QX1mlBiDoQ4NR3uCudfr8EIQ0tUirxoTt04YgxPffEektoFmZJuM9VefA5BoFwzfyPlLmmCzP03p35GaQC3rLLg00T6lPag4m');
 
 const ListingDetails = () => {
   const [loading, setLoading] = useState(true);
@@ -34,7 +34,7 @@ const ListingDetails = () => {
   const getListingDetails = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3001/properties/${listingId}`,
+        `https://home-ease-backend.onrender.com/properties/${listingId}`,
         {
           method: "GET",
         }
@@ -96,7 +96,7 @@ const ListingDetails = () => {
         token,
       };
 
-      const response = await fetch("http://localhost:3001/bookings/create", {
+      const response = await fetch("https://home-ease-backend.onrender.com/bookings/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -127,7 +127,7 @@ const ListingDetails = () => {
         <div className="photos">
           {listing.listingPhotoPaths?.map((item) => (
             <img
-              src={`http://localhost:3001/${item.replace("public", "")}`}
+              src={`https://home-ease-backend.onrender.com/${item.replace("public", "")}`}
               alt="listing photo"
             />
           ))}
@@ -145,7 +145,7 @@ const ListingDetails = () => {
 
         <div className="profile">
           <img
-            src={`http://localhost:3001/${listing.creator.profileImagePath.replace(
+            src={`https://home-ease-backend.onrender.com/${listing.creator.profileImagePath.replace(
               "public",
               ""
             )}`}
