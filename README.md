@@ -1,5 +1,14 @@
 # **Home Rental Website**
 
+Some screenshots of project:
+![Screenshot (33)](https://github.com/user-attachments/assets/2eb54af3-ee1c-493b-ab85-7d01698c2def)
+
+![Screenshot (34)](https://github.com/user-attachments/assets/7782945a-14b8-438b-a582-201b6c7a1379)
+
+![Screenshot (35)](https://github.com/user-attachments/assets/9d6dad17-1ad0-428d-93f9-91e0d0158fbe)
+
+![Screenshot (36)](https://github.com/user-attachments/assets/575357e0-c54f-473e-ad98-a565df6fbb9c)
+
 
 A fully functional home rental platform built using modern web technologies. This project provides users with the ability to browse property listings, register complaints, and manage their rental interactions with ease. The website incorporates secure user authentication, responsive design, and dynamic data management with payment intigration.
 
@@ -86,13 +95,4 @@ JWT_SECRET
 STRIPE_PUBLISHABLE_KEY
 
 STRIPE_SECRET_KEY
-
-Some screenshots of project:
-![Screenshot (33)](https://github.com/user-attachments/assets/2eb54af3-ee1c-493b-ab85-7d01698c2def)
-
-![Screenshot (34)](https://github.com/user-attachments/assets/7782945a-14b8-438b-a582-201b6c7a1379)
-
-![Screenshot (35)](https://github.com/user-attachments/assets/9d6dad17-1ad0-428d-93f9-91e0d0158fbe)
-
-![Screenshot (36)](https://github.com/user-attachments/assets/575357e0-c54f-473e-ad98-a565df6fbb9c)
 
