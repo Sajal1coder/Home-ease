@@ -8,7 +8,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setWishList } from "../redux/state";
-import LazyImage from "./Lazyimage";
+import LazyImage from "@/LazyImage";
 
 const ListingCard = ({
   listingId,

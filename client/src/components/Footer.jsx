@@ -1,6 +1,6 @@
 import "../styles/Footer.scss"
 import { LocationOn, LocalPhone, Email } from "@mui/icons-material"
-import LazyImage from "./Lazyimage"
+import LazyImage from "@/LazyImage"
 const Footer = () => {
   return (
     <div className="footer">

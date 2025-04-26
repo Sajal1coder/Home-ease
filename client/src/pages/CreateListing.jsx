@@ -11,7 +11,7 @@ import { BiTrash } from "react-icons/bi";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer"
-import LazyImage from "../components/Lazyimage";
+import LazyImage from "@/components/LazyImage";
 
 const CreateListing = () => {
   const [category, setCategory] = useState("");

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"
 import "../styles/Register.scss";
-import LazyImage from "../components/Lazyimage";
+import LazyImage from "@/components/LazyImage";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({

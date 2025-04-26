@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import "../styles/navbar.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { setLogout } from "../redux/state";
-import LazyImage from "./Lazyimage";
+import LazyImage from "@/LazyImage";
 
 
 const Navbar = () => {
