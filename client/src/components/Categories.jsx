@@ -20,7 +20,7 @@ const Categories = () => {
         {filtered?.slice(0,7).map((category, index) => (
           <Link to={`/properties/category/${category.label}`}>
             <div className="category" key={index}>
-              <img src={category.img} alt={category.label} />
+              <LazyImage src={category.img} alt={category.label} />
               <div className="overlay"></div>
               <div className="category_text">
                 <div className="category_text_icon">{category.icon}</div>

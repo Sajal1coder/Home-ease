@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"
 import "../styles/Register.scss";
+import LazyImage from "../components/Lazyimage";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -110,12 +111,12 @@ const RegisterPage = () => {
             required
           />
           <label htmlFor="image">
-            <img src="/assets/addImage.png" alt="add profile photo" />
+            <LazyImage src="/assets/addImage.png" alt="add profile photo" />
             <p>Upload Your Photo</p>
           </label>
 
           {formData.profileImage && (
-            <img
+            <LazyImage
               src={URL.createObjectURL(formData.profileImage)}
               alt="profile photo"
               style={{ maxWidth: "80px" }}

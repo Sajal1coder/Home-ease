@@ -8,6 +8,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setWishList } from "../redux/state";
+import LazyImage from "./Lazyimage";
 
 const ListingCard = ({
   listingId,
@@ -105,7 +106,7 @@ const ListingCard = ({
         >
           {listingPhotoPaths?.map((photo, index) => (
             <div key={index} className="slide">
-              <img
+              <LazyImage
                 src={`https://home-ease-backend.onrender.com/${photo?.replace("public", "")}`}
                 alt={` ${index + 1}`}
               />

@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import "../styles/navbar.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { setLogout } from "../redux/state";
+import LazyImage from "./Lazyimage";
 
 
 const Navbar = () => {
@@ -22,7 +23,7 @@ const Navbar = () => {
   return (
     <div className="navbar">
       <a href="/">
-        <img src="/assets/logo.png" alt="logo" />
+        <LazyImage src="/assets/logo.png" alt="logo" />
       </a>
 
       <div className="navbar_search">
@@ -60,7 +61,7 @@ const Navbar = () => {
     <Person sx={{ color: variables.darkgrey }} />
   ) : (
     user.profileImagePath && (
-      <img
+      <LazyImage
         src={`https://home-ease-backend.onrender.com/${user.profileImagePath.replace(
           "public",
           ""

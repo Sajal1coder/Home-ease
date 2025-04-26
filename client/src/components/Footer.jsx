@@ -1,10 +1,11 @@
 import "../styles/Footer.scss"
 import { LocationOn, LocalPhone, Email } from "@mui/icons-material"
+import LazyImage from "./Lazyimage"
 const Footer = () => {
   return (
     <div className="footer">
       <div className="footer_left">
-        <a href="/"><img src="/assets/logo.png" alt="logo" /></a>
+        <a href="/"><LazyImage src="/assets/logo.png" alt="logo" /></a>
       </div>
 
       <div className="footer_center">
@@ -26,7 +27,7 @@ const Footer = () => {
           <Email />
           <p>homease@support.com</p>
         </div>
-        <img src="/assets/payment.png" alt="payment" />
+        <LazyImage src="/assets/payment.png" alt="payment" />
         <div>
           <LocationOn />
           <p>123, Mitali Street, karna road,Mumbai, India -194111</p>
