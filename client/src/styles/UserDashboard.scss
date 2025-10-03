@@ -1,0 +1,627 @@
+@import "./variables.scss";
+@import "./breakpoints.scss";
+
+.user-dashboard {
+  display: flex;
+  min-height: calc(100vh - 100px); // Adjust for navbar height
+  padding-top: 20px;
+  padding-bottom: 40px;
+  background: #f5f7fa;
+
+  @include lg {
+    flex-direction: column;
+  }
+
+  .dashboard-sidebar {
+    width: 280px;
+    background: white;
+    border-right: 1px solid $lightgrey;
+    padding: 30px 0;
+
+    @include lg {
+      width: 100%;
+      border-right: none;
+      border-bottom: 1px solid $lightgrey;
+      padding: 20px 0;
+    }
+
+    .dashboard-nav {
+      display: flex;
+      flex-direction: column;
+
+      @include lg {
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 0 20px;
+      }
+
+      button {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 30px;
+        border: none;
+        background: transparent;
+        color: $darkgrey;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: left;
+
+        @include lg {
+          white-space: nowrap;
+          padding: 12px 20px;
+        }
+
+        svg {
+          font-size: 22px;
+        }
+
+        &:hover {
+          background: rgba($pinkred, 0.1);
+          color: $pinkred;
+        }
+
+        &.active {
+          background: linear-gradient(90deg, rgba($pinkred, 0.15), transparent);
+          color: $pinkred;
+          border-left: 4px solid $pinkred;
+
+          @include lg {
+            border-left: none;
+            border-bottom: 3px solid $pinkred;
+          }
+        }
+
+        &.admin-link {
+          margin-top: 20px;
+          color: $blue;
+          border-top: 1px solid $lightgrey;
+          padding-top: 30px;
+
+          @include lg {
+            margin-top: 0;
+            border-top: none;
+            padding-top: 12px;
+          }
+
+          &:hover {
+            background: rgba($blue, 0.1);
+            color: $blue;
+          }
+        }
+      }
+    }
+  }
+
+  .dashboard-content {
+    flex: 1;
+    padding: 40px;
+
+    @include lg {
+      padding: 30px 20px;
+    }
+
+    .profile-tab {
+      .profile-header {
+        background: white;
+        border-radius: 16px;
+        padding: 40px;
+        margin-bottom: 30px;
+        @include shadow-sm;
+        display: flex;
+        gap: 40px;
+        align-items: center;
+
+        @include sm {
+          flex-direction: column;
+          padding: 30px 20px;
+          gap: 20px;
+        }
+
+        .profile-photo-section {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 15px;
+
+          .profile-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid $lightgrey;
+          }
+
+          .upload-photo-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 20px;
+            background: $pinkred;
+            color: white;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &:hover {
+              background: darken($pinkred, 10%);
+            }
+          }
+        }
+
+        .profile-info {
+          flex: 1;
+
+          @include sm {
+            text-align: center;
+          }
+
+          h2 {
+            font-size: 28px;
+            color: $blue;
+            margin-bottom: 10px;
+          }
+
+          .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #d4edda;
+            color: #155724;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 10px;
+
+            svg {
+              font-size: 18px;
+            }
+          }
+
+          .member-since {
+            color: $grey;
+            font-size: 14px;
+            margin-top: 8px;
+          }
+        }
+      }
+
+      .profile-details {
+        background: white;
+        border-radius: 16px;
+        padding: 40px;
+        @include shadow-sm;
+
+        @include sm {
+          padding: 30px 20px;
+        }
+
+        .section-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 30px;
+
+          @include sm {
+            flex-direction: column;
+            gap: 15px;
+          }
+
+          h3 {
+            color: $blue;
+            font-size: 22px;
+          }
+
+          .edit-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 20px;
+            border: 1px solid $pinkred;
+            background: white;
+            color: $pinkred;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &:hover {
+              background: $pinkred;
+              color: white;
+            }
+          }
+
+          .edit-actions {
+            display: flex;
+            gap: 10px;
+
+            button {
+              padding: 10px 20px;
+              border-radius: 8px;
+              font-weight: 600;
+              cursor: pointer;
+              transition: all 0.3s ease;
+
+              &.save-btn {
+                background: $pinkred;
+                border: none;
+                color: white;
+
+                &:hover {
+                  background: darken($pinkred, 10%);
+                }
+              }
+
+              &.cancel-btn {
+                background: white;
+                border: 1px solid $lightgrey;
+                color: $darkgrey;
+
+                &:hover {
+                  background: $lightgrey;
+                }
+              }
+            }
+          }
+        }
+
+        .info-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 25px;
+
+          @include sm {
+            grid-template-columns: 1fr;
+          }
+
+          .info-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+
+            &.full-width {
+              grid-column: 1 / -1;
+            }
+
+            label {
+              font-weight: 600;
+              color: $darkgrey;
+              font-size: 14px;
+            }
+
+            p {
+              color: $blue;
+              font-size: 16px;
+              margin: 0;
+            }
+
+            input,
+            textarea {
+              padding: 12px;
+              border: 1px solid $lightgrey;
+              border-radius: 8px;
+              font-size: 15px;
+              font-family: inherit;
+
+              &:focus {
+                outline: none;
+                border-color: $pinkred;
+              }
+            }
+
+            textarea {
+              resize: vertical;
+            }
+          }
+        }
+      }
+    }
+
+    .listings-tab,
+    .bookings-tab,
+    .wishlist-tab {
+      .tab-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+
+        @include sm {
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        h3 {
+          color: $blue;
+          font-size: 24px;
+        }
+
+        .add-btn {
+          padding: 12px 24px;
+          background: $pinkred;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+
+          &:hover {
+            background: darken($pinkred, 10%);
+          }
+        }
+      }
+
+      h3 {
+        color: $blue;
+        font-size: 24px;
+        margin-bottom: 30px;
+      }
+
+      .listings-grid,
+      .wishlist-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 25px;
+
+        .listing-card-dash,
+        .wishlist-card {
+          background: white;
+          border-radius: 12px;
+          overflow: hidden;
+          @include shadow-sm;
+          transition: all 0.3s ease;
+          cursor: pointer;
+
+          &:hover {
+            @include shadow;
+            transform: translateY(-4px);
+          }
+
+          .listing-image,
+          .wishlist-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+          }
+
+          .listing-info,
+          .wishlist-info {
+            padding: 20px;
+
+            h4 {
+              color: $blue;
+              font-size: 16px;
+              margin-bottom: 8px;
+            }
+
+            .location,
+            p {
+              color: $darkgrey;
+              font-size: 14px;
+              margin: 4px 0;
+            }
+
+            .price {
+              color: $pinkred;
+              font-weight: 700;
+              font-size: 16px;
+              margin-top: 8px;
+            }
+
+            .verified-badge {
+              display: inline-flex;
+              align-items: center;
+              gap: 4px;
+              background: #d4edda;
+              color: #155724;
+              padding: 4px 10px;
+              border-radius: 12px;
+              font-size: 11px;
+              font-weight: 600;
+              margin-top: 8px;
+
+              svg {
+                font-size: 14px;
+              }
+            }
+          }
+
+          .listing-stats {
+            padding: 15px 20px;
+            border-top: 1px solid $lightgrey;
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: $darkgrey;
+
+            span {
+              display: flex;
+              align-items: center;
+              gap: 4px;
+
+              svg {
+                font-size: 16px;
+                color: #FFD700;
+              }
+            }
+          }
+        }
+      }
+
+      .bookings-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        .booking-card {
+          background: white;
+          border-radius: 12px;
+          @include shadow-sm;
+          display: flex;
+          gap: 20px;
+          padding: 20px;
+          transition: all 0.3s ease;
+
+          @include sm {
+            flex-direction: column;
+          }
+
+          &:hover {
+            @include shadow;
+          }
+
+          .booking-image {
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+
+            @include sm {
+              width: 100%;
+            }
+          }
+
+          .booking-info {
+            flex: 1;
+
+            h4 {
+              color: $blue;
+              font-size: 18px;
+              margin-bottom: 8px;
+            }
+
+            p {
+              color: $darkgrey;
+              font-size: 14px;
+              margin: 4px 0;
+            }
+
+            .booking-dates {
+              color: $darkgrey;
+              margin: 10px 0;
+              font-size: 14px;
+            }
+
+            .booking-total {
+              color: $pinkred;
+              font-weight: 700;
+              font-size: 16px;
+              margin-top: 8px;
+            }
+          }
+
+          .booking-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: flex-end;
+
+            @include sm {
+              flex-direction: row;
+              justify-content: space-between;
+            }
+
+            .chat-btn {
+              display: flex;
+              align-items: center;
+              gap: 6px;
+              padding: 10px 20px;
+              background: $pinkred;
+              color: white;
+              border: none;
+              border-radius: 8px;
+              font-size: 14px;
+              font-weight: 600;
+              cursor: pointer;
+              transition: all 0.3s ease;
+
+              svg {
+                font-size: 18px;
+              }
+
+              &:hover {
+                background: darken($pinkred, 10%);
+                transform: translateY(-2px);
+                @include shadow;
+              }
+            }
+
+            .status-badge {
+              display: inline-block;
+              padding: 8px 16px;
+              border-radius: 20px;
+              font-size: 13px;
+              font-weight: 600;
+              white-space: nowrap;
+
+              &.confirmed {
+                background: #d4edda;
+                color: #155724;
+              }
+
+              &.pending {
+                background: #fff3cd;
+                color: #856404;
+              }
+
+              &.cancelled {
+                background: #f8d7da;
+                color: #721c24;
+              }
+
+              &.completed {
+                background: #d1ecf1;
+                color: #0c5460;
+              }
+            }
+          }
+        }
+      }
+
+      .empty-state {
+        background: white;
+        border-radius: 16px;
+        padding: 80px 40px;
+        text-align: center;
+        @include shadow-sm;
+
+        p {
+          color: $darkgrey;
+          font-size: 18px;
+          margin: 20px 0 30px 0;
+        }
+
+        button {
+          padding: 14px 28px;
+          background: $pinkred;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-weight: 600;
+          font-size: 16px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+
+          &:hover {
+            background: darken($pinkred, 10%);
+          }
+        }
+      }
+    }
+  }
+}
+
+.dashboard-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-size: 18px;
+  color: $darkgrey;
+}

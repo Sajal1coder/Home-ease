@@ -1,7 +1,7 @@
 import { categories } from "../data";
 import "../styles/Categories.scss"
 import { Link } from "react-router-dom";
-import LazyImage from "@/LazyImage";
+import LazyImage from "./LazyImage";
 
 const Categories = () => {
 

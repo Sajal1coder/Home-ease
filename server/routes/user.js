@@ -38,6 +38,18 @@ router.patch("/:userId/:listingId", async (req, res) => {
     }
   });
 
+  /* GET WISH LIST */
+  router.get("/:userId/wishList", async (req, res) => {
+    try {
+      const { userId } = req.params
+      const user = await User.findById(userId).populate('wishList')
+      res.status(200).json(user.wishList)
+    } catch (err) {
+      console.log(err)
+      res.status(404).json({ message: "Can not find wish list!", error: err.message })
+    }
+  });
+
   /*  For Property list*/
   router.get("/:userId/properties", async (req, res) => {
     try {

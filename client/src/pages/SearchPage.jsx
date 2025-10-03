@@ -7,6 +7,7 @@ import Loader from "../components/Loader"
 import Navbar from "../components/Navbar";
 import ListingCard from "../components/ListingCard";
 import Footer from "../components/Footer"
+import API_BASE_URL from '../config';
 
 const SearchPage = () => {
   const [loading, setLoading] = useState(true)
@@ -17,7 +18,7 @@ const SearchPage = () => {
 
   const getSearchListings = async () => {
     try {
-      const response = await fetch(`https://home-ease-backend.onrender.com/properties/search/${search}`, {
+      const response = await fetch(`${API_BASE_URL}/properties/search/${search}`, {
         method: "GET"
       })
 

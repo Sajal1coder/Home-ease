@@ -5,9 +5,73 @@
   cursor: pointer;
   padding: 10px;
   border-radius: 10px;
+  transition: all 0.3s ease;
 
   &:hover {
     @include shadow;
+    transform: translateY(-4px);
+  }
+
+  .listing-badges {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 100;
+    display: flex;
+    gap: 8px;
+
+    .badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      backdrop-filter: blur(10px);
+
+      &.verified-badge {
+        background-color: rgba(16, 185, 129, 0.9);
+        color: white;
+      }
+    }
+  }
+
+  .listing-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 5px;
+
+    h3 {
+      font-size: 18px;
+      margin: 0;
+      flex: 1;
+    }
+
+    .rating {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 2px;
+
+      .rating-value {
+        font-weight: 700;
+        font-size: 14px;
+        color: $blue;
+      }
+
+      .review-count {
+        font-size: 12px;
+        color: $darkgrey;
+      }
+    }
+  }
+
+  .category {
+    color: $darkgrey;
+    font-weight: 600;
+    margin: 5px 0;
   }
 
   .slider-container {

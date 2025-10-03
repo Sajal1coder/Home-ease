@@ -4,11 +4,14 @@ import {
   ArrowForwardIos,
   ArrowBackIosNew,
   Favorite,
+  Star,
+  Verified,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setWishList } from "../redux/state";
-import LazyImage from "@/LazyImage";
+import LazyImage from "./LazyImage";
+import { toast } from 'react-toastify';
 
 const ListingCard = ({
   listingId,
@@ -74,20 +77,37 @@ const ListingCard = ({
   const isLiked = wishList?.find((item) => item?._id === listingId);
 
   const patchWishList = async () => {
+    if (!user) {
+      toast.info('Please login to add to wishlist');
+      return;
+    }
+    
     if (user?._id !== creator._id) {
-    const response = await fetch(
-      `https://home-ease-backend.onrender.com/users/${user?._id}/${listingId}`,
-      {
-        method: "PATCH",
-        header: {
-          "Content-Type": "application/json",
-        },
+      try {
+        const response = await fetch(
+          `https://home-ease-backend.onrender.com/users/${user?._id}/${listingId}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const data = await response.json();
+        dispatch(setWishList(data.wishList));
+        toast.success(isLiked ? 'Removed from wishlist' : 'Added to wishlist');
+      } catch (error) {
+        toast.error('Failed to update wishlist');
       }
-    );
-    const data = await response.json();
-    dispatch(setWishList(data.wishList));
-  } else { return }
+    } else { 
+      toast.info('You cannot add your own property to wishlist');
+    }
   };
+
+  // Generate random rating for demo (in production, this would come from API)
+  const rating = (4 + Math.random()).toFixed(1);
+  const reviewCount = Math.floor(Math.random() * 100) + 10;
+  const isVerified = Math.random() > 0.3; // 70% verified
 
   return (
     <div
@@ -96,6 +116,16 @@ const ListingCard = ({
         navigate(`/properties/${listingId}`);
       }}
     >
+      {/* Badges */}
+      <div className="listing-badges">
+        {isVerified && (
+          <div className="badge verified-badge">
+            <Verified sx={{ fontSize: '14px' }} />
+            <span>Verified</span>
+          </div>
+        )}
+      </div>
+
       <div className="slider-container"
        onMouseEnter={() => setIsHovering(true)}  
        onMouseLeave={() => setIsHovering(false)} >
@@ -133,10 +163,19 @@ const ListingCard = ({
         </div>
       </div>
 
-      <h3>
-        {city}, {province}, {country}
-      </h3>
-      <p>{category}</p>
+      <div className="listing-info">
+        <h3>
+          {city}, {province}, {country}
+        </h3>
+        
+        <div className="rating">
+          <Star sx={{ fontSize: '16px', color: '#F59E0B' }} />
+          <span className="rating-value">{rating}</span>
+          <span className="review-count">({reviewCount})</span>
+        </div>
+      </div>
+      
+      <p className="category">{category}</p>
 
       {!booking ? (
         <>

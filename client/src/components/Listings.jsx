@@ -2,42 +2,23 @@ import { useEffect, useState } from "react";
 import { categories } from "../data";
 import "../styles/Listings.scss";
 import ListingCard from "./ListingCard";
-import Loader from "./Loader";
+import SkeletonCard from "./SkeletonCard";
 import { useDispatch, useSelector } from "react-redux";
-import { setListings, setCategory, setSortOrder, setMinPrice, setMaxPrice ,setLoading} from "../redux/state"; // Import Redux actions
+import { setListings, setCategory, setSortOrder, setMinPrice, setMaxPrice, setLoading } from "../redux/state";
+import { toast } from 'react-toastify';
+import Pagination from "./Pagination";
 
 const Listings = () => {
   const dispatch = useDispatch();
 
   const loading = useSelector((state) => state.loading);
   const selectedCategory = useSelector((state) => state.selectedCategory || 'All');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(12);
   const sortOrder = useSelector((state) => state.sortOrder || 'lowToHigh');
   const minPrice = useSelector((state) => state.minPrice||0);
   const maxPrice = useSelector((state) => state.maxPrice||1000000);
   const listings = useSelector((state) => state.listings)||[];
-
-  const getFeedListings = async () => {
-    try {
-      const response = await fetch(
-        selectedCategory !== "All"
-          ? `https://home-ease-backend.onrender.com/properties?category=${selectedCategory}`
-          : "https://home-ease-backend.onrender.com/properties",
-        {
-          method: "GET",
-        }
-      );
-
-      const data = await response.json();
-      dispatch(setListings({ listings: data }));
-      setLoading(false);
-    } catch (err) {
-      console.log("Fetch Listings Failed", err.message);
-    }
-  };
-
-  useEffect(() => {
-    getFeedListings();
-  }, [selectedCategory]);
 
   const filteredListings = listings.filter(
     (listing) => listing.price >= minPrice && listing.price <= maxPrice
@@ -51,7 +32,49 @@ const Listings = () => {
     }
   });
 
-  
+  const totalPages = Math.ceil(sortedListings.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentListings = sortedListings.slice(startIndex, endIndex);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, sortOrder, minPrice, maxPrice]);
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 400, behavior: 'smooth' });
+  };
+
+  const getFeedListings = async () => {
+    try {
+      dispatch(setLoading(true));
+      const response = await fetch(
+        selectedCategory !== "All"
+          ? `https://home-ease-backend.onrender.com/properties?category=${selectedCategory}`
+          : "https://home-ease-backend.onrender.com/properties",
+        {
+          method: "GET",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch listings');
+      }
+
+      const data = await response.json();
+      dispatch(setListings({ listings: data }));
+      dispatch(setLoading(false));
+    } catch (err) {
+      console.error("Fetch Listings Failed", err.message);
+      toast.error('Failed to load properties. Please try again.');
+      dispatch(setLoading(false));
+    }
+  };
+
+  useEffect(() => {
+    getFeedListings();
+  }, [selectedCategory]);
 
   return (
     <>
@@ -101,10 +124,20 @@ const Listings = () => {
       </div>
 
       {loading ? (
-        <Loader />
-      ) : (
         <div className="listings">
-          {sortedListings.map(
+          {[...Array(8)].map((_, index) => (
+            <SkeletonCard key={index} />
+          ))}
+        </div>
+      ) : currentListings.length === 0 ? (
+        <div className="no-listings">
+          <h2>No properties found</h2>
+          <p>Try adjusting your filters or search criteria</p>
+        </div>
+      ) : (
+        <>
+          <div className="listings">
+            {currentListings.map(
             ({
               _id,
               creator,
@@ -131,8 +164,19 @@ const Listings = () => {
                 booking={booking}
               />
             )
+            )}
+          </div>
+          
+          {totalPages > 1 && (
+            <Pagination 
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              itemsPerPage={itemsPerPage}
+              totalItems={sortedListings.length}
+            />
           )}
-        </div>
+        </>
       )}
     </>
   );

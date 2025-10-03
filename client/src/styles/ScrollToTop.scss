@@ -1,0 +1,49 @@
+@import "./variables.scss";
+
+.scroll-to-top {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: $pinkred;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 9998;
+  @include shadow-lg;
+  transition: all 0.3s ease;
+  animation: slideUp 0.3s ease;
+
+  &:hover {
+    background-color: $pinkred-dark;
+    transform: translateY(-5px);
+    @include shadow-xl;
+  }
+
+  &:active {
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    bottom: 20px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

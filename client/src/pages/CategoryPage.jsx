@@ -7,6 +7,7 @@ import { setListings } from "../redux/state";
 import Loader from "../components/Loader";
 import ListingCard from "../components/ListingCard";
 import Footer from "../components/Footer"
+import API_BASE_URL from '../config';
 
 const CategoryPage = () => {
   const [loading, setLoading] = useState(true);
@@ -18,7 +19,7 @@ const CategoryPage = () => {
   const getFeedListings = async () => {
     try {
       const response = await fetch(
-          `https://home-ease-backend.onrender.com/properties?category=${category}`,
+          `${API_BASE_URL}/properties?category=${category}`,
         {
           method: "GET",
         }

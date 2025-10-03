@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import "../styles/ListingDetails.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import { facilities } from "../data";
-
+import { Close, ChevronLeft, ChevronRight } from "@mui/icons-material";
+import ReviewSection from '../components/ReviewSection';
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { DateRange } from "react-date-range";
@@ -12,15 +13,19 @@ import { useSelector } from "react-redux";
 import Footer from "../components/Footer";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
+import API_BASE_URL from '../config';
 import CheckoutForm from "../components/CheckoutForm";
-import LazyImage from "@/components/LazyImage";
+import LazyImage from "../components/LazyImage";
+import { toast } from 'react-toastify';
 
 const stripePromise = loadStripe('pk_test_51QX1mlBiDoQ4NR3uCudfr8EIQ0tUirxoTt04YgxPffEektoFmZJuM9VefA5BoFwzfyPlLmmCzP03p35GaQC3rLLg00T6lPag4m');
 
 const ListingDetails = () => {
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(""); // State for error message
+  const [error, setError] = useState("");
   const [isBooking, setIsBooking] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   const [dateRange, setDateRange] = useState([
     {
       startDate: new Date(),
@@ -35,7 +40,7 @@ const ListingDetails = () => {
   const getListingDetails = async () => {
     try {
       const response = await fetch(
-        `https://home-ease-backend.onrender.com/properties/${listingId}`,
+        `${API_BASE_URL}/properties/${listingId}`,
         {
           method: "GET",
         }
@@ -45,9 +50,46 @@ const ListingDetails = () => {
       setListing(data);
       setLoading(false);
     } catch (err) {
-      console.log("Fetch Listing Details Failed", err.message);
+      console.error("Fetch Listing Details Failed", err.message);
+      toast.error('Failed to load property details');
+      setLoading(false);
     }
   };
+
+  // Lightbox navigation
+  const openLightbox = (index) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
+
+  const closeLightbox = () => {
+    setLightboxOpen(false);
+  };
+
+  const goToNext = () => {
+    setLightboxIndex((prev) => 
+      (prev + 1) % listing.listingPhotoPaths.length
+    );
+  };
+
+  const goToPrev = () => {
+    setLightboxIndex((prev) => 
+      (prev - 1 + listing.listingPhotoPaths.length) % listing.listingPhotoPaths.length
+    );
+  };
+
+  // Keyboard navigation for lightbox
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (!lightboxOpen) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowRight') goToNext();
+      if (e.key === 'ArrowLeft') goToPrev();
+    };
+    
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [lightboxOpen, listing]);
 
   useEffect(() => {
     getListingDetails();
@@ -97,7 +139,7 @@ const ListingDetails = () => {
         token,
       };
 
-      const response = await fetch("https://home-ease-backend.onrender.com/bookings/create", {
+      const response = await fetch(`${API_BASE_URL}/bookings/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -126,13 +168,55 @@ const ListingDetails = () => {
         </div>
 
         <div className="photos">
-          {listing.listingPhotoPaths?.map((item) => (
-            <LazyImage
-              src={`https://home-ease-backend.onrender.com/${item.replace("public", "")}`}
-              alt="listing photo"
-            />
+          {listing.listingPhotoPaths?.map((item, index) => (
+            <div 
+              key={index} 
+              className="photo-item"
+              onClick={() => openLightbox(index)}
+            >
+              <LazyImage
+                src={`${API_BASE_URL}/${item.replace("public", "")}`}
+                alt="listing photo"
+              />
+            </div>
           ))}
         </div>
+
+        {/* Lightbox Gallery */}
+        {lightboxOpen && (
+          <div className="lightbox" onClick={closeLightbox}>
+            <button className="lightbox-close" onClick={closeLightbox}>
+              <Close sx={{ fontSize: '32px' }} />
+            </button>
+            <button 
+              className="lightbox-prev" 
+              onClick={(e) => {
+                e.stopPropagation();
+                goToPrev();
+              }}
+            >
+              <ChevronLeft sx={{ fontSize: '48px' }} />
+            </button>
+            <button 
+              className="lightbox-next" 
+              onClick={(e) => {
+                e.stopPropagation();
+                goToNext();
+              }}
+            >
+              <ChevronRight sx={{ fontSize: '48px' }} />
+            </button>
+            <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
+              <img
+                src={`${API_BASE_URL}/${listing.listingPhotoPaths[lightboxIndex].replace("public", "")}`}
+                alt={`Property ${lightboxIndex + 1}`}
+              />
+              <div className="lightbox-counter">
+                {lightboxIndex + 1} / {listing.listingPhotoPaths.length}
+              </div>
+            </div>
+          </div>
+        )}
 
         <h2>
           {listing.type} in {listing.city}, {listing.province},{" "}
@@ -146,7 +230,7 @@ const ListingDetails = () => {
 
         <div className="profile">
           <LazyImage
-            src={`https://home-ease-backend.onrender.com/${listing.creator.profileImagePath.replace(
+            src={`${API_BASE_URL}/${listing.creator.profileImagePath.replace(
               "public",
               ""
             )}`}
@@ -205,7 +289,7 @@ const ListingDetails = () => {
           </div>
         </div>
       </div>
-
+      <ReviewSection listingId={listing._id} hostId={listing.creator._id} />
       <Footer />
     </>
   );

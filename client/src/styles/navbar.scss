@@ -40,6 +40,15 @@
     }
   }
 
+  &_mobile_search {
+    display: none;
+
+    @include sm {
+      display: flex;
+      align-items: center;
+    }
+  }
+
   &_right {
     display: flex;
     align-items: center;

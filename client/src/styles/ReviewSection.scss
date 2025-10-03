@@ -1,0 +1,652 @@
+@import "./variables.scss";
+@import "./breakpoints.scss";
+
+.review-section {
+  padding: 40px 0;
+  border-top: 1px solid $lightgrey;
+
+  .review-header {
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+
+    h2 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 24px;
+      color: $blue;
+      font-weight: 700;
+    }
+
+    .write-review-btn {
+      padding: 12px 24px;
+      background: $pinkred;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      &:hover {
+        background: darken($pinkred, 10%);
+        transform: translateY(-2px);
+        @include shadow;
+      }
+
+      @include sm {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    .review-info-message {
+      color: $grey;
+      font-size: 14px;
+      font-style: italic;
+      margin: 0;
+    }
+  }
+
+  .rating-breakdown {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    @include shadow-sm;
+
+    .rating-bar {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 12px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .rating-label {
+        min-width: 60px;
+        font-size: 14px;
+        color: $darkgrey;
+        font-weight: 600;
+      }
+
+      .bar-container {
+        flex: 1;
+        height: 8px;
+        background: $lightgrey;
+        border-radius: 4px;
+        overflow: hidden;
+
+        .bar-fill {
+          height: 100%;
+          background: linear-gradient(90deg, $pinkred, #ff6b9d);
+          transition: width 0.3s ease;
+        }
+      }
+
+      .rating-percentage {
+        min-width: 40px;
+        text-align: right;
+        font-size: 14px;
+        color: $darkgrey;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+
+    .review-card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      @include shadow-sm;
+      transition: all 0.3s ease;
+
+      &:hover {
+        @include shadow;
+        transform: translateY(-2px);
+      }
+
+      .review-header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 15px;
+
+        @include sm {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .reviewer-info {
+          display: flex;
+          gap: 15px;
+          align-items: center;
+
+          .reviewer-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid $lightgrey;
+          }
+
+          h4 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: $blue;
+          }
+
+          .review-date {
+            margin: 5px 0 0 0;
+            font-size: 13px;
+            color: $grey;
+          }
+        }
+
+        .rating-stars {
+          display: flex;
+          gap: 2px;
+        }
+      }
+
+      .detailed-ratings {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-bottom: 15px;
+        padding: 15px;
+        background: $lightgrey;
+        border-radius: 8px;
+
+        @include sm {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        .detail-rating {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 13px;
+
+          span {
+            color: $darkgrey;
+            font-weight: 600;
+            white-space: nowrap;
+          }
+
+          .stars {
+            display: flex;
+            gap: 2px;
+          }
+        }
+      }
+
+      .review-comment {
+        color: $darkgrey;
+        line-height: 1.6;
+        margin-bottom: 15px;
+        font-size: 15px;
+      }
+
+      .review-photos {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
+        margin-bottom: 15px;
+
+        .review-photo {
+          width: 100%;
+          height: 100px;
+          object-fit: cover;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: transform 0.3s ease;
+
+          &:hover {
+            transform: scale(1.05);
+          }
+        }
+      }
+
+      .host-response {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 3px solid $pinkred;
+        margin-bottom: 15px;
+        display: flex;
+        gap: 10px;
+
+        strong {
+          color: $blue;
+          font-size: 14px;
+          margin-bottom: 8px;
+          display: block;
+        }
+
+        p {
+          margin: 8px 0;
+          color: $darkgrey;
+          font-size: 14px;
+          line-height: 1.5;
+        }
+
+        .response-date {
+          font-size: 12px;
+          color: $grey;
+        }
+      }
+
+      .review-actions {
+        display: flex;
+        gap: 15px;
+        padding-top: 15px;
+        border-top: 1px solid $lightgrey;
+
+        .action-btn {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 8px 16px;
+          border: 1px solid $lightgrey;
+          background: white;
+          border-radius: 20px;
+          font-size: 13px;
+          font-weight: 600;
+          color: $darkgrey;
+          cursor: pointer;
+          transition: all 0.3s ease;
+
+          &:hover {
+            border-color: $pinkred;
+            color: $pinkred;
+            background: rgba($pinkred, 0.05);
+          }
+        }
+      }
+    }
+  }
+
+  .review-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 30px;
+
+    .page-btn {
+      min-width: 40px;
+      height: 40px;
+      border: 1px solid $lightgrey;
+      background: white;
+      border-radius: 8px;
+      font-weight: 600;
+      color: $blue;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover:not(.active) {
+        border-color: $pinkred;
+        color: $pinkred;
+      }
+
+      &.active {
+        background: $pinkred;
+        border-color: $pinkred;
+        color: white;
+      }
+    }
+  }
+
+  .no-reviews {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 12px;
+    @include shadow-sm;
+
+    p {
+      color: $darkgrey;
+      font-size: 16px;
+    }
+  }
+
+  .loading {
+    text-align: center;
+    padding: 40px;
+    color: $darkgrey;
+    font-size: 16px;
+  }
+}
+
+// Review modal styles (for creating reviews)
+.review-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+
+  .modal-content {
+    background: white;
+    border-radius: 16px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 30px;
+
+    h2 {
+      color: $blue;
+      margin-bottom: 25px;
+    }
+
+    .rating-selector {
+      margin-bottom: 20px;
+
+      label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: $darkgrey;
+      }
+
+      .stars-interactive {
+        display: flex;
+        gap: 5px;
+
+        svg {
+          font-size: 32px;
+          cursor: pointer;
+          transition: transform 0.2s ease;
+
+          &:hover {
+            transform: scale(1.2);
+          }
+        }
+      }
+    }
+
+    .form-field {
+      margin-bottom: 20px;
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: $darkgrey;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 120px;
+        padding: 12px;
+        border: 1px solid $lightgrey;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 14px;
+        resize: vertical;
+
+        &:focus {
+          outline: none;
+          border-color: $pinkred;
+        }
+      }
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+
+      button {
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &.cancel-btn {
+          background: white;
+          border: 1px solid $lightgrey;
+          color: $darkgrey;
+
+          &:hover {
+            background: $lightgrey;
+          }
+        }
+
+        &.submit-btn {
+          background: $pinkred;
+          border: none;
+          color: white;
+
+          &:hover {
+            background: darken($pinkred, 10%);
+          }
+
+          &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+  }
+
+  // Review Modal Styles
+  .review-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+
+    .review-modal-content {
+      background: white;
+      border-radius: 16px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 24px;
+        border-bottom: 1px solid $lightgrey;
+
+        h3 {
+          font-size: 22px;
+          color: $blue;
+          margin: 0;
+        }
+
+        .close-btn {
+          background: none;
+          border: none;
+          font-size: 32px;
+          color: $grey;
+          cursor: pointer;
+          width: 36px;
+          height: 36px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          transition: all 0.2s ease;
+
+          &:hover {
+            background: $lightgrey;
+            color: $blue;
+          }
+        }
+      }
+
+      form {
+        padding: 24px;
+
+        .form-group {
+          margin-bottom: 24px;
+
+          label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: $blue;
+            margin-bottom: 8px;
+          }
+
+          .booking-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid $lightgrey;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s ease;
+
+            &:focus {
+              border-color: $pinkred;
+            }
+          }
+
+          .star-rating {
+            display: flex;
+            gap: 8px;
+            font-size: 32px;
+          }
+
+          textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid $lightgrey;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.3s ease;
+
+            &:focus {
+              border-color: $pinkred;
+            }
+          }
+        }
+
+        .detailed-ratings {
+          margin-bottom: 24px;
+
+          h4 {
+            font-size: 16px;
+            color: $blue;
+            margin-bottom: 16px;
+          }
+
+          .rating-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 8px 0;
+
+            label {
+              font-size: 14px;
+              color: $darkgrey;
+              font-weight: 500;
+              margin: 0;
+            }
+
+            .star-rating-small {
+              display: flex;
+              gap: 4px;
+              font-size: 20px;
+            }
+          }
+        }
+
+        .modal-actions {
+          display: flex;
+          gap: 12px;
+          justify-content: flex-end;
+          margin-top: 24px;
+          padding-top: 24px;
+          border-top: 1px solid $lightgrey;
+
+          @include sm {
+            flex-direction: column;
+          }
+
+          button {
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+
+            @include sm {
+              width: 100%;
+            }
+
+            &.cancel-btn {
+              background: white;
+              border: 1px solid $lightgrey;
+              color: $darkgrey;
+
+              &:hover {
+                background: $lightgrey;
+              }
+            }
+
+            &.submit-btn {
+              background: $pinkred;
+              color: white;
+
+              &:hover {
+                background: darken($pinkred, 10%);
+                @include shadow;
+              }
+
+              &:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

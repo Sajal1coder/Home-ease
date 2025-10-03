@@ -38,6 +38,10 @@ const UserSchema = new mongoose.Schema(
     reservationList: {
       type: Array,
       default: [],
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false,
     }
   },
   { timestamps: true }

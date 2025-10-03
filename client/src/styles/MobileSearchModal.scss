@@ -1,0 +1,145 @@
+@import "./variables.scss";
+@import "./breakpoints.scss";
+
+.mobile-search-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+
+  @include lg {
+    display: flex;
+  }
+
+  .mobile-search-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  .mobile-search-content {
+    position: relative;
+    background: white;
+    width: 100%;
+    max-width: 600px;
+    margin: 20px;
+    border-radius: 20px;
+    padding: 20px;
+    @include shadow;
+    animation: slideDown 0.3s ease;
+
+    @include sm {
+      margin: 10px;
+      border-radius: 15px;
+      padding: 15px;
+    }
+
+    .mobile-search-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+
+      h2 {
+        color: $blue;
+        font-size: 24px;
+        margin: 0;
+
+        @include sm {
+          font-size: 20px;
+        }
+      }
+    }
+
+    .mobile-search-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 2px solid $grey;
+      border-radius: 50px;
+      padding: 5px 10px;
+      margin-bottom: 30px;
+      transition: all 0.3s ease;
+
+      &:focus-within {
+        border-color: $pinkred;
+        @include shadow;
+      }
+
+      input {
+        flex: 1;
+        border: none;
+        outline: none;
+        font-size: 16px;
+        padding: 10px;
+
+        &::placeholder {
+          color: $darkgrey;
+        }
+      }
+    }
+
+    .search-suggestions {
+      .suggestions-title {
+        color: $blue;
+        font-weight: 700;
+        font-size: 16px;
+        margin-bottom: 15px;
+      }
+
+      .suggestion-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+
+        .suggestion-chip {
+          padding: 8px 16px;
+          background-color: $lightgrey;
+          border: 1px solid $grey;
+          border-radius: 20px;
+          color: $blue;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+
+          &:hover {
+            background-color: $pinkred;
+            color: white;
+            border-color: $pinkred;
+            transform: translateY(-2px);
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

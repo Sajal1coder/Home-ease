@@ -6,11 +6,13 @@ import { useSelector, useDispatch } from "react-redux";
 import "../styles/navbar.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { setLogout } from "../redux/state";
-import LazyImage from "@/LazyImage";
-
+import LazyImage from "./LazyImage";
+import MobileSearchModal from "./MobileSearchModal";
+import API_BASE_URL from "../config";
 
 const Navbar = () => {
   const [dropdownMenu, setDropdownMenu] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
   const user = useSelector((state) => state.user);
 
@@ -32,12 +34,24 @@ const Navbar = () => {
           placeholder="Search ..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter' && search !== "") {
+              navigate(`/properties/search/${search}`);
+            }
+          }}
         />
         <IconButton disabled={search === ""}>
           <Search
             sx={{ color: variables.pinkred }}
             onClick={() => {navigate(`/properties/search/${search}`)}}
           />
+        </IconButton>
+      </div>
+
+      {/* Mobile Search Icon */}
+      <div className="navbar_mobile_search">
+        <IconButton onClick={() => setMobileSearchOpen(true)}>
+          <Search sx={{ color: variables.pinkred }} />
         </IconButton>
       </div>
 
@@ -52,26 +66,26 @@ const Navbar = () => {
           </a>
         )}
 
-<button
-  className="navbar_right_account"
-  onClick={() => setDropdownMenu(!dropdownMenu)}
->
-  <Menu sx={{ color: variables.darkgrey }} />
-  {!user ? (
-    <Person sx={{ color: variables.darkgrey }} />
-  ) : (
-    user.profileImagePath && (
-      <LazyImage
-        src={`https://home-ease-backend.onrender.com/${user.profileImagePath.replace(
-          "public",
-          ""
-        )}`}
-        alt="profile photo"
-        style={{ objectFit: "cover", borderRadius: "50%" }}
-      />
-    )
-  )}
-</button>
+        <button
+          className="navbar_right_account"
+          onClick={() => setDropdownMenu(!dropdownMenu)}
+        >
+          <Menu sx={{ color: variables.darkgrey }} />
+          {!user ? (
+            <Person sx={{ color: variables.darkgrey }} />
+          ) : (
+            user.profileImagePath && (
+              <LazyImage
+                src={`${API_BASE_URL}/${user.profileImagePath.replace(
+                  "public",
+                  ""
+                )}`}
+                alt="profile photo"
+                style={{ objectFit: "cover", borderRadius: "50%" }}
+              />
+            )
+          )}
+        </button>
 
         {dropdownMenu && !user && (
           <div className="navbar_right_accountmenu">
@@ -82,10 +96,11 @@ const Navbar = () => {
 
         {dropdownMenu && user && (
           <div className="navbar_right_accountmenu">
-            <Link to={`/${user._id}/trips`}>Trip List</Link>
-            <Link to={`/${user._id}/wishList`}>Wish List</Link>
-            <Link to={`/${user._id}/properties`}>Property List</Link>
-            <Link to={`/${user._id}/reservations`}>Reservation List</Link>
+            <Link to="/dashboard">Dashboard</Link>
+            <Link to="/messages">Messages</Link>
+            {user.isAdmin && (
+              <Link to="/admin">Admin Panel</Link>
+            )}
             <Link to="/create-listing">Become A Host</Link>
 
             <Link
@@ -99,6 +114,12 @@ const Navbar = () => {
           </div>
         )}
       </div>
+
+      {/* Mobile Search Modal */}
+      <MobileSearchModal 
+        isOpen={mobileSearchOpen} 
+        onClose={() => setMobileSearchOpen(false)} 
+      />
     </div>
   );
 };
