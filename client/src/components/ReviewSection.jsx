@@ -98,22 +98,58 @@ const ReviewSection = ({ listingId, hostId }) => {
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${token}`
-          }
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
       const data = await response.json();
-      
       if (response.ok) {
-        toast.success(data.message);
         fetchReviews(); // Refresh reviews
+        toast.success('Review marked as helpful!');
       } else {
         toast.error(data.message);
       }
     } catch (error) {
       console.error('Error marking review as helpful:', error);
       toast.error('Failed to update review');
+    }
+  };
+
+  const handleReport = async (reviewId) => {
+    if (!user) {
+      toast.info('Please login to report reviews');
+      return;
+    }
+
+    const reason = prompt('Please provide a reason for reporting this review:');
+    if (!reason || reason.trim() === '') {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/reviews/${reviewId}/report`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ reason: reason.trim() })
+        }
+      );
+
+      const data = await response.json();
+      if (response.ok) {
+        toast.success('Review reported successfully. Thank you for helping keep our community safe.');
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error('Error reporting review:', error);
+      toast.error('Failed to report review');
     }
   };
 
@@ -271,7 +307,10 @@ const ReviewSection = ({ listingId, hostId }) => {
                 <ThumbUp sx={{ fontSize: '16px' }} />
                 Helpful ({review.helpful || 0})
               </button>
-              <button className="action-btn">
+              <button 
+                className="action-btn"
+                onClick={() => handleReport(review._id)}
+              >
                 <Flag sx={{ fontSize: '16px' }} />
                 Report
               </button>
@@ -392,22 +431,109 @@ const ReviewModal = ({ listingId, eligibleBookings, selectedBooking, setSelected
   };
 
   return (
-    <div className="review-modal-overlay" onClick={onClose}>
-      <div className="review-modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h3>Leave a Review</h3>
-          <button className="close-btn" onClick={onClose}>×</button>
+    <div 
+      className="review-modal-overlay" 
+      onClick={onClose}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'rgba(0, 0, 0, 0.8)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 10000,
+        padding: '20px'
+      }}
+    >
+      <div 
+        className="review-modal-content" 
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: 'white',
+          borderRadius: '16px',
+          maxWidth: '600px',
+          width: '100%',
+          maxHeight: '90vh',
+          overflowY: 'auto',
+          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
+        }}
+      >
+        <div 
+          className="modal-header"
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '24px',
+            borderBottom: '1px solid #e9ecef',
+            background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+            borderRadius: '16px 16px 0 0'
+          }}
+        >
+          <h3 style={{ 
+            fontSize: '22px', 
+            color: '#1e3a8a', 
+            margin: 0, 
+            fontWeight: '700',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
+          }}>
+            ✍️ Leave a Review
+          </h3>
+          <button 
+            className="close-btn" 
+            onClick={onClose}
+            style={{
+              background: 'rgba(255, 255, 255, 0.8)',
+              border: '1px solid #dee2e6',
+              fontSize: '24px',
+              color: '#6c757d',
+              cursor: 'pointer',
+              width: '40px',
+              height: '40px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '50%',
+              transition: 'all 0.3s ease'
+            }}
+          >
+            ×
+          </button>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} style={{ padding: '24px' }}>
           {/* Booking Selection */}
           {eligibleBookings.length > 1 && (
-            <div className="form-group">
-              <label>Select Your Stay:</label>
+            <div className="form-group" style={{ marginBottom: '24px' }}>
+              <label style={{
+                display: 'block',
+                fontSize: '15px',
+                fontWeight: '600',
+                color: '#1e3a8a',
+                marginBottom: '12px',
+                position: 'relative'
+              }}>
+                Select Your Stay:
+              </label>
               <select 
                 value={selectedBooking} 
                 onChange={(e) => setSelectedBooking(e.target.value)}
                 className="booking-select"
+                style={{
+                  width: '100%',
+                  padding: '14px 16px',
+                  border: '2px solid #dee2e6',
+                  borderRadius: '12px',
+                  fontSize: '14px',
+                  outline: 'none',
+                  background: 'white',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)'
+                }}
               >
                 {eligibleBookings.map((booking) => (
                   <option key={booking._id} value={booking._id}>
@@ -419,20 +545,71 @@ const ReviewModal = ({ listingId, eligibleBookings, selectedBooking, setSelected
           )}
 
           {/* Overall Rating */}
-          <div className="form-group">
-            <label>Overall Rating:</label>
-            <div className="star-rating">
+          <div className="form-group" style={{ marginBottom: '24px' }}>
+            <label style={{
+              display: 'block',
+              fontSize: '15px',
+              fontWeight: '600',
+              color: '#1e3a8a',
+              marginBottom: '12px',
+              position: 'relative'
+            }}>
+              Overall Rating:
+            </label>
+            <div className="star-rating" style={{ 
+              display: 'flex', 
+              gap: '8px', 
+              fontSize: '32px', 
+              padding: '8px 0' 
+            }}>
               {renderStars(rating, setRating)}
             </div>
           </div>
 
           {/* Detailed Ratings */}
-          <div className="detailed-ratings">
-            <h4>Rate Your Experience:</h4>
+          <div className="detailed-ratings" style={{
+            marginBottom: '24px',
+            background: '#f8f9fa',
+            padding: '20px',
+            borderRadius: '12px',
+            border: '1px solid #e9ecef'
+          }}>
+            <h4 style={{
+              fontSize: '16px',
+              color: '#1e3a8a',
+              marginBottom: '16px',
+              fontWeight: '700',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              ⭐ Rate Your Experience:
+            </h4>
             {Object.keys(detailedRatings).map((key) => (
-              <div key={key} className="rating-row">
-                <label>{key.charAt(0).toUpperCase() + key.slice(1)}:</label>
-                <div className="star-rating-small">
+              <div key={key} className="rating-row" style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '12px',
+                padding: '12px 16px',
+                background: 'white',
+                borderRadius: '8px',
+                border: '1px solid #e9ecef'
+              }}>
+                <label style={{
+                  fontSize: '14px',
+                  color: '#6c757d',
+                  fontWeight: '600',
+                  margin: 0,
+                  textTransform: 'capitalize'
+                }}>
+                  {key.charAt(0).toUpperCase() + key.slice(1)}:
+                </label>
+                <div className="star-rating-small" style={{
+                  display: 'flex',
+                  gap: '4px',
+                  fontSize: '20px'
+                }}>
                   {renderStars(detailedRatings[key], (value) => 
                     setDetailedRatings({...detailedRatings, [key]: value})
                   )}
@@ -442,23 +619,82 @@ const ReviewModal = ({ listingId, eligibleBookings, selectedBooking, setSelected
           </div>
 
           {/* Comment */}
-          <div className="form-group">
-            <label>Your Review:</label>
+          <div className="form-group" style={{ marginBottom: '24px' }}>
+            <label style={{
+              display: 'block',
+              fontSize: '15px',
+              fontWeight: '600',
+              color: '#1e3a8a',
+              marginBottom: '12px',
+              position: 'relative'
+            }}>
+              Your Review:
+            </label>
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder="Share your experience at this property..."
               rows="5"
               required
+              style={{
+                width: '100%',
+                padding: '16px',
+                border: '2px solid #dee2e6',
+                borderRadius: '12px',
+                fontSize: '14px',
+                fontFamily: 'inherit',
+                resize: 'vertical',
+                outline: 'none',
+                background: 'white',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+                minHeight: '120px'
+              }}
             />
           </div>
 
           {/* Submit Button */}
-          <div className="modal-actions">
-            <button type="button" onClick={onClose} className="cancel-btn">
+          <div className="modal-actions" style={{
+            display: 'flex',
+            gap: '16px',
+            justifyContent: 'flex-end',
+            marginTop: '32px',
+            paddingTop: '24px',
+            borderTop: '2px solid #e9ecef'
+          }}>
+            <button 
+              type="button" 
+              onClick={onClose} 
+              className="cancel-btn"
+              style={{
+                padding: '14px 32px',
+                borderRadius: '12px',
+                fontSize: '15px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                background: 'white',
+                border: '2px solid #dee2e6',
+                color: '#6c757d'
+              }}
+            >
               Cancel
             </button>
-            <button type="submit" disabled={submitting} className="submit-btn">
+            <button 
+              type="submit" 
+              disabled={submitting} 
+              className="submit-btn"
+              style={{
+                padding: '14px 32px',
+                borderRadius: '12px',
+                fontSize: '15px',
+                fontWeight: '700',
+                cursor: submitting ? 'not-allowed' : 'pointer',
+                background: submitting ? '#ccc' : 'linear-gradient(135deg, #F8395A 0%, #e73c7e 100%)',
+                border: 'none',
+                color: 'white',
+                boxShadow: submitting ? 'none' : '0 4px 15px rgba(248, 57, 90, 0.3)',
+                opacity: submitting ? 0.6 : 1
+              }}
+            >
               {submitting ? 'Submitting...' : 'Submit Review'}
             </button>
           </div>

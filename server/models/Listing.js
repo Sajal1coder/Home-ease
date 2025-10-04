@@ -60,10 +60,6 @@ const ListingSchema = new mongoose.Schema(
       required: true
     },
     govtIdPath: [{ type: String }], // Store file URLs
-    title: {
-      type: String,
-      required: true
-    },
     description: {
       type: String,
       required: true
@@ -79,6 +75,35 @@ const ListingSchema = new mongoose.Schema(
     price: {
       type: Number,
       required: true,
+    },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
+    verifiedAt: {
+      type: Date,
+      default: null,
+    },
+    rejectedAt: {
+      type: Date,
+      default: null,
+    },
+    adminNotes: {
+      type: String,
+      default: "",
+    },
+    active: {
+      type: Boolean,
+      default: true,
+    },
+    status: {
+      type: String,
+      enum: ['pending', 'active', 'rejected', 'deleted'],
+      default: 'pending',
+    },
+    deletedAt: {
+      type: Date,
+      default: null,
     }
   },
   { timestamps: true}

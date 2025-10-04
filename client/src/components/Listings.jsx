@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setListings, setCategory, setSortOrder, setMinPrice, setMaxPrice, setLoading } from "../redux/state";
 import { toast } from 'react-toastify';
 import Pagination from "./Pagination";
+import API_BASE_URL from '../config';
 
 const Listings = () => {
   const dispatch = useDispatch();
@@ -51,8 +52,8 @@ const Listings = () => {
       dispatch(setLoading(true));
       const response = await fetch(
         selectedCategory !== "All"
-          ? `https://home-ease-backend.onrender.com/properties?category=${selectedCategory}`
-          : "https://home-ease-backend.onrender.com/properties",
+          ? `${API_BASE_URL}/properties?category=${selectedCategory}`
+          : `${API_BASE_URL}/properties`,
         {
           method: "GET",
         }
@@ -93,33 +94,42 @@ const Listings = () => {
       </div>
 
       <div className="sort-options">
-        <label>Sort options:</label>
-        <select
-          className="sele"
-          value={sortOrder}
-          onChange={(e) => dispatch(setSortOrder(e.target.value))} // Dispatch sort order change
-        >
-          <option value="lowToHigh">Price: Low to High</option>
-          <option value="highToLow">Price: High to Low</option>
-        </select>
+        <label>Sort & Filter Options</label>
+        <div className="sort-controls-wrapper">
+          <div className="sort-dropdown-section">
+            <label>Sort by Price:</label>
+            <select
+              className="sele"
+              value={sortOrder}
+              onChange={(e) => dispatch(setSortOrder(e.target.value))} // Dispatch sort order change
+            >
+              <option value="lowToHigh">Price: Low to High</option>
+              <option value="highToLow">Price: High to Low</option>
+            </select>
+          </div>
 
-        <div className="price-range">
-          <label>Min Price: ₹{minPrice}</label>
-          <input
-            type="range"
-            min="0"
-            max="10000"
-            value={minPrice}
-            onChange={(e) => dispatch(setMinPrice(e.target.value))} // Dispatch min price change
-          />
-          <label>Max Price: ₹{maxPrice}</label>
-          <input
-            type="range"
-            min="0"
-            max="100000"
-            value={maxPrice}
-            onChange={(e) => dispatch(setMaxPrice(e.target.value))} // Dispatch max price change
-          />
+          <div className="price-range">
+            <div className="price-section">
+              <label>Min Price: ₹{minPrice}</label>
+              <input
+                type="range"
+                min="0"
+                max="10000"
+                value={minPrice}
+                onChange={(e) => dispatch(setMinPrice(e.target.value))} // Dispatch min price change
+              />
+            </div>
+            <div className="price-section">
+              <label>Max Price: ₹{maxPrice}</label>
+              <input
+                type="range"
+                min="0"
+                max="100000"
+                value={maxPrice}
+                onChange={(e) => dispatch(setMaxPrice(e.target.value))} // Dispatch max price change
+              />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -148,6 +158,9 @@ const Listings = () => {
               category,
               type,
               price,
+              verified = false,
+              averageRating = 0,
+              reviewCount = 0,
               booking = false,
             }) => (
               <ListingCard
@@ -161,6 +174,9 @@ const Listings = () => {
                 category={category}
                 type={type}
                 price={price}
+                verified={verified}
+                averageRating={averageRating}
+                reviewCount={reviewCount}
                 booking={booking}
               />
             )

@@ -1,0 +1,404 @@
+@import "./variables.scss";
+@import "./breakpoints.scss";
+
+.search-dropdown {
+  position: relative;
+  width: 100%;
+
+  // Desktop Search Styles
+  &.desktop-search {
+    .search-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: white;
+      border: 2px solid $lightgrey;
+      border-radius: 25px;
+      padding: 2px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+      &:focus-within {
+        border-color: $pinkred;
+        box-shadow: 0 0 0 3px rgba(248, 57, 90, 0.1);
+      }
+
+      .search-input {
+        flex: 1;
+        border: none;
+        outline: none;
+        padding: 12px 20px;
+        font-size: 15px;
+        background: transparent;
+        color: $darkgrey;
+
+        &::placeholder {
+          color: $grey;
+        }
+      }
+
+      .search-btn {
+        background: $pinkred;
+        border: none;
+        border-radius: 50%;
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: white;
+
+        &:hover:not(:disabled) {
+          background: darken($pinkred, 10%);
+          transform: scale(1.05);
+        }
+
+        &:disabled {
+          background: $grey;
+          cursor: not-allowed;
+        }
+
+        svg {
+          font-size: 20px;
+        }
+      }
+    }
+
+    .search-dropdown-content {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+      border: 1px solid $lightgrey;
+      z-index: 1000;
+      margin-top: 8px;
+      max-height: 400px;
+      overflow-y: auto;
+      animation: dropdownSlideDown 0.2s ease;
+
+      @keyframes dropdownSlideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    }
+
+    .suggestion-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      padding: 0 16px 16px;
+
+      .suggestion-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 16px;
+        border: 1px solid $lightgrey;
+        border-radius: 12px;
+        background: white;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+
+        &:hover {
+          border-color: $pinkred;
+          background: rgba($pinkred, 0.05);
+          transform: translateY(-1px);
+        }
+
+        .suggestion-text {
+          font-size: 14px;
+          font-weight: 500;
+          color: $darkgrey;
+        }
+      }
+    }
+  }
+
+  // Mobile Search Modal Styles
+  &.mobile-search-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+
+    .mobile-search-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .mobile-search-content {
+      position: relative;
+      background: white;
+      height: 100vh;
+      overflow-y: auto;
+      animation: slideInFromTop 0.3s ease;
+
+      @keyframes slideInFromTop {
+        from {
+          transform: translateY(-100%);
+        }
+        to {
+          transform: translateY(0);
+        }
+      }
+    }
+
+    .mobile-search-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      border-bottom: 1px solid $lightgrey;
+      background: #f8f9fa;
+
+      h2 {
+        font-size: 20px;
+        font-weight: 700;
+        color: $blue;
+        margin: 0;
+      }
+
+      .close-btn {
+        background: none;
+        border: none;
+        padding: 8px;
+        cursor: pointer;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: $lightgrey;
+        }
+
+        svg {
+          font-size: 24px;
+          color: $darkgrey;
+        }
+      }
+    }
+
+    .search-input-wrapper {
+      padding: 20px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      background: white;
+      border-bottom: 1px solid $lightgrey;
+
+      .search-input {
+        flex: 1;
+        padding: 16px 20px;
+        border: 2px solid $lightgrey;
+        border-radius: 12px;
+        font-size: 16px;
+        outline: none;
+        transition: all 0.3s ease;
+
+        &:focus {
+          border-color: $pinkred;
+          box-shadow: 0 0 0 3px rgba(248, 57, 90, 0.1);
+        }
+
+        &::placeholder {
+          color: $grey;
+        }
+      }
+
+      .search-btn {
+        background: $pinkred;
+        border: none;
+        border-radius: 12px;
+        width: 52px;
+        height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: white;
+
+        &.active:hover {
+          background: darken($pinkred, 10%);
+          transform: scale(1.05);
+        }
+
+        &:disabled {
+          background: $grey;
+          cursor: not-allowed;
+        }
+
+        svg {
+          font-size: 22px;
+        }
+      }
+    }
+
+    .suggestion-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 0 20px 20px;
+
+      .suggestion-chip {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 16px;
+        background: white;
+        border: 1px solid $lightgrey;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 14px;
+        font-weight: 500;
+
+        &:hover {
+          border-color: $pinkred;
+          background: rgba($pinkred, 0.05);
+          transform: translateY(-1px);
+        }
+
+        .chip-text {
+          color: $darkgrey;
+        }
+
+        &.location {
+          &:hover {
+            border-color: #007bff;
+            background: rgba(#007bff, 0.05);
+          }
+        }
+
+        &.category {
+          &:hover {
+            border-color: #28a745;
+            background: rgba(#28a745, 0.05);
+          }
+        }
+
+        &.feature {
+          &:hover {
+            border-color: #ffc107;
+            background: rgba(#ffc107, 0.05);
+          }
+        }
+      }
+    }
+  }
+
+  // Common Suggestion Styles
+  .search-suggestions {
+    padding: 20px 0;
+  }
+
+  .suggestion-section {
+    margin-bottom: 24px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px 12px;
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        color: $blue;
+
+        svg {
+          font-size: 18px;
+          color: $pinkred;
+        }
+      }
+
+      .clear-btn {
+        background: none;
+        border: none;
+        color: $pinkred;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: rgba($pinkred, 0.1);
+        }
+      }
+    }
+
+    .suggestion-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 0 20px;
+
+      .suggestion-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        background: none;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: left;
+        width: 100%;
+
+        &:hover {
+          background: rgba($pinkred, 0.05);
+        }
+
+        &.past-search {
+          svg {
+            color: $grey;
+            font-size: 16px;
+          }
+
+          span {
+            color: $darkgrey;
+            font-size: 14px;
+          }
+        }
+      }
+    }
+  }
+
+  // Responsive adjustments
+  @include sm {
+    &.desktop-search {
+      .search-dropdown-content {
+        .suggestion-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    }
+  }
+}

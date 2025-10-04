@@ -14,7 +14,7 @@ const ReviewSchema = new mongoose.Schema({
   booking: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Booking",
-    required: true, // Must have a booking to leave a review
+    required: false, // Not required for anonymous admin reviews
   },
   rating: {
     type: Number,
@@ -34,7 +34,6 @@ const ReviewSchema = new mongoose.Schema({
   comment: {
     type: String,
     required: true,
-    minlength: 20,
     maxlength: 1000,
   },
   photos: [{
@@ -65,6 +64,32 @@ const ReviewSchema = new mongoose.Schema({
     default: false,
   },
   reportReason: String,
+  reportedBy: [{
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    reason: String,
+    reportedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  reportCount: {
+    type: Number,
+    default: 0,
+  },
+  // Anonymous review fields
+  isAnonymous: {
+    type: Boolean,
+    default: false,
+  },
+  anonymousUserData: {
+    _id: mongoose.Schema.Types.ObjectId,
+    firstName: String,
+    lastName: String,
+    profileImagePath: String,
+  },
 }, {
   timestamps: true,
 });
@@ -72,7 +97,7 @@ const ReviewSchema = new mongoose.Schema({
 // Indexes for better performance
 ReviewSchema.index({ listing: 1, createdAt: -1 });
 ReviewSchema.index({ user: 1 });
-ReviewSchema.index({ booking: 1 }, { unique: true }); // One review per booking
+ReviewSchema.index({ booking: 1 }, { unique: true, sparse: true }); // One review per booking, sparse for anonymous reviews
 ReviewSchema.index({ status: 1 });
 
 // Compound index for listing reviews with ratings

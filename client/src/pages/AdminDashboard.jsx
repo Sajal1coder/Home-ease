@@ -9,7 +9,11 @@ import {
   Home, 
   RateReview,
   VerifiedUser,
-  Block
+  Block,
+  Delete,
+  Visibility,
+  Close,
+  Add
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import API_BASE_URL from '../config';
@@ -27,6 +31,8 @@ const AdminDashboard = () => {
   const [reviews, setReviews] = useState([]);
   const [stats, setStats] = useState({});
   const [loading, setLoading] = useState(true);
+  const [documentModal, setDocumentModal] = useState({ open: false, property: null });
+  const [reviewModal, setReviewModal] = useState({ open: false, property: null });
 
   useEffect(() => {
     // Check if user is admin
@@ -90,11 +96,13 @@ const AdminDashboard = () => {
         }
       );
 
+      const data = await response.json();
+
       if (response.ok) {
         toast.success(`User ${status ? 'verified' : 'unverified'} successfully`);
         fetchDashboardData();
       } else {
-        toast.error('Failed to update user status');
+        toast.error(data.message || 'Failed to update user status');
       }
     } catch (error) {
       console.error('Error verifying user:', error);
@@ -116,11 +124,13 @@ const AdminDashboard = () => {
         }
       );
 
+      const data = await response.json();
+
       if (response.ok) {
         toast.success(`Property ${status ? 'verified' : 'rejected'} successfully`);
         fetchDashboardData();
       } else {
-        toast.error('Failed to update property status');
+        toast.error(data.message || 'Failed to update property status');
       }
     } catch (error) {
       console.error('Error verifying property:', error);
@@ -140,11 +150,13 @@ const AdminDashboard = () => {
         }
       );
 
+      const data = await response.json();
+
       if (response.ok) {
         toast.success(`Review ${action === 'approve' ? 'approved' : 'rejected'} successfully`);
         fetchDashboardData();
       } else {
-        toast.error('Failed to moderate review');
+        toast.error(data.message || 'Failed to moderate review');
       }
     } catch (error) {
       console.error('Error moderating review:', error);
@@ -166,16 +178,64 @@ const AdminDashboard = () => {
         }
       );
 
+      const data = await response.json();
+
       if (response.ok) {
         toast.success(`User ${block ? 'blocked' : 'unblocked'} successfully`);
         fetchDashboardData();
       } else {
-        toast.error('Failed to update user status');
+        toast.error(data.message || 'Failed to update user status');
       }
     } catch (error) {
       console.error('Error blocking user:', error);
       toast.error('Failed to block user');
     }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    if (!window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/admin/users/${userId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success('User deleted successfully');
+        fetchDashboardData();
+      } else {
+        toast.error(data.message || 'Failed to delete user');
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      toast.error('Failed to delete user');
+    }
+  };
+
+  const handleViewDocuments = (property) => {
+    setDocumentModal({ open: true, property });
+  };
+
+  const closeDocumentModal = () => {
+    setDocumentModal({ open: false, property: null });
+  };
+
+  const handleAddReview = (property) => {
+    setReviewModal({ open: true, property });
+  };
+
+  const closeReviewModal = () => {
+    setReviewModal({ open: false, property: null });
   };
 
   if (loading) {
@@ -304,6 +364,14 @@ const AdminDashboard = () => {
                               <CheckCircle /> Unblock
                             </button>
                           )}
+                          {!user.isAdmin && (
+                            <button 
+                              className="btn-delete"
+                              onClick={() => handleDeleteUser(user._id)}
+                            >
+                              <Delete /> Delete
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -334,6 +402,20 @@ const AdminDashboard = () => {
                     </span>
                   </div>
                   <div className="property-actions">
+                    <button 
+                      className="btn-view-docs"
+                      onClick={() => handleViewDocuments(property)}
+                      title="View Government ID Documents"
+                    >
+                      <Visibility /> View Documents
+                    </button>
+                    <button 
+                      className="btn-add-review"
+                      onClick={() => handleAddReview(property)}
+                      title="Add Anonymous Review"
+                    >
+                      <Add /> Add Review
+                    </button>
                     {!property.verified && (
                       <>
                         <button 
@@ -399,6 +481,236 @@ const AdminDashboard = () => {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Document Modal */}
+      {documentModal.open && documentModal.property && (
+        <div className="document-modal-overlay" onClick={closeDocumentModal}>
+          <div className="document-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Government ID Documents</h3>
+              <button className="close-btn" onClick={closeDocumentModal}>
+                <Close />
+              </button>
+            </div>
+            
+            <div className="modal-body">
+              <div className="property-details">
+                <h4>{documentModal.property.title}</h4>
+                <p><strong>Host:</strong> {documentModal.property.creator?.firstName} {documentModal.property.creator?.lastName}</p>
+                <p><strong>Email:</strong> {documentModal.property.creator?.email}</p>
+                <p><strong>Location:</strong> {documentModal.property.city}, {documentModal.property.country}</p>
+              </div>
+              
+              <div className="documents-section">
+                <h4>Uploaded Documents:</h4>
+                {documentModal.property.govtIdPath && documentModal.property.govtIdPath.length > 0 ? (
+                  <div className="documents-grid">
+                    {documentModal.property.govtIdPath.map((docPath, index) => (
+                      <div key={index} className="document-item">
+                        <LazyImage
+                          src={`${API_BASE_URL}/${docPath.replace("public", "")}`}
+                          alt={`Government ID ${index + 1}`}
+                          className="document-image"
+                        />
+                        <p>Document {index + 1}</p>
+                        <a 
+                          href={`${API_BASE_URL}/${docPath.replace("public", "")}`} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="view-full-btn"
+                        >
+                          View Full Size
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="no-documents">No government ID documents uploaded</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Review Modal */}
+      {reviewModal.open && reviewModal.property && (
+        <ReviewModal 
+          property={reviewModal.property}
+          onClose={closeReviewModal}
+          token={token}
+          onSuccess={() => {
+            closeReviewModal();
+            toast.success('Anonymous review added successfully!');
+          }}
+        />
+      )}
+    </div>
+  );
+};
+
+// Review Modal Component
+const ReviewModal = ({ property, onClose, token, onSuccess }) => {
+  const [formData, setFormData] = useState({
+    anonymousName: '',
+    rating: 5,
+    comment: '',
+    cleanliness: 5,
+    accuracy: 5,
+    communication: 5,
+    location: 5,
+    checkIn: 5,
+    value: 5
+  });
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!formData.comment.trim()) {
+      toast.error('Please enter a review comment');
+      return;
+    }
+
+
+    try {
+      setSubmitting(true);
+      const response = await fetch(`${API_BASE_URL}/admin/reviews/create-anonymous`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          listingId: property._id,
+          anonymousName: formData.anonymousName || 'Anonymous',
+          rating: formData.rating,
+          comment: formData.comment,
+          ratings: {
+            cleanliness: formData.cleanliness,
+            accuracy: formData.accuracy,
+            communication: formData.communication,
+            location: formData.location,
+            checkIn: formData.checkIn,
+            value: formData.value
+          }
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        onSuccess();
+      } else {
+        toast.error(data.message || 'Failed to create review');
+      }
+    } catch (error) {
+      console.error('Error creating review:', error);
+      toast.error('Failed to create review');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  return (
+    <div className="review-modal-overlay" onClick={onClose}>
+      <div className="review-modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h3>Add Anonymous Review</h3>
+          <button className="close-btn" onClick={onClose}>
+            <Close />
+          </button>
+        </div>
+        
+        <div className="modal-body">
+          <div className="property-info">
+            <h4>{property.title}</h4>
+            <p>{property.city}, {property.country}</p>
+          </div>
+          
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>Anonymous Name (Optional):</label>
+              <input
+                type="text"
+                value={formData.anonymousName}
+                onChange={(e) => handleInputChange('anonymousName', e.target.value)}
+                placeholder="Anonymous (default)"
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Overall Rating:</label>
+              <div className="rating-input">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <span
+                    key={star}
+                    onClick={() => handleInputChange('rating', star)}
+                    style={{ 
+                      cursor: 'pointer', 
+                      fontSize: '24px', 
+                      color: star <= formData.rating ? '#FFD700' : '#ddd' 
+                    }}
+                  >
+                    ★
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="detailed-ratings">
+              <h4>Detailed Ratings:</h4>
+              {['cleanliness', 'accuracy', 'communication', 'location', 'checkIn', 'value'].map((category) => (
+                <div key={category} className="rating-row">
+                  <label>{category.charAt(0).toUpperCase() + category.slice(1)}:</label>
+                  <div className="rating-input">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <span
+                        key={star}
+                        onClick={() => handleInputChange(category, star)}
+                        style={{ 
+                          cursor: 'pointer', 
+                          fontSize: '18px', 
+                          color: star <= formData[category] ? '#FFD700' : '#ddd' 
+                        }}
+                      >
+                        ★
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="form-group">
+              <label>Review Comment:</label>
+              <textarea
+                value={formData.comment}
+                onChange={(e) => handleInputChange('comment', e.target.value)}
+                placeholder="Write a detailed review..."
+                rows="4"
+                className="form-textarea"
+                required
+              />
+              <small>{formData.comment.length}/1000 characters</small>
+            </div>
+
+            <div className="modal-actions">
+              <button type="button" onClick={onClose} className="cancel-btn">
+                Cancel
+              </button>
+              <button type="submit" disabled={submitting} className="submit-btn">
+                {submitting ? 'Creating...' : 'Create Review'}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -2,8 +2,17 @@
 @import "./breakpoints.scss";
 
 .review-section {
-  padding: 40px 0;
+  padding: 40px 80px;
   border-top: 1px solid $lightgrey;
+  background: #f5f7fa;
+  
+  @include lg {
+    padding: 30px 40px;
+  }
+
+  @include sm {
+    padding: 20px;
+  }
 
   .review-header {
     margin-bottom: 30px;
@@ -463,12 +472,13 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.8);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    z-index: 10000;
     padding: 20px;
+    animation: fadeIn 0.3s ease;
 
     .review-modal-content {
       background: white;
@@ -478,6 +488,7 @@
       max-height: 90vh;
       overflow-y: auto;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: slideInUp 0.3s ease;
 
       .modal-header {
         display: flex;
@@ -485,30 +496,44 @@
         align-items: center;
         padding: 24px;
         border-bottom: 1px solid $lightgrey;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 16px 16px 0 0;
 
         h3 {
           font-size: 22px;
           color: $blue;
           margin: 0;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          
+          &::before {
+            content: "✍️";
+            font-size: 20px;
+          }
         }
 
         .close-btn {
-          background: none;
-          border: none;
-          font-size: 32px;
+          background: rgba(255, 255, 255, 0.8);
+          border: 1px solid $lightgrey;
+          font-size: 24px;
           color: $grey;
           cursor: pointer;
-          width: 36px;
-          height: 36px;
+          width: 40px;
+          height: 40px;
           display: flex;
           align-items: center;
           justify-content: center;
           border-radius: 50%;
-          transition: all 0.2s ease;
+          transition: all 0.3s ease;
+          backdrop-filter: blur(10px);
 
           &:hover {
-            background: $lightgrey;
-            color: $blue;
+            background: rgba(248, 57, 90, 0.1);
+            border-color: $pinkred;
+            color: $pinkred;
+            transform: scale(1.1);
           }
         }
       }
@@ -518,26 +543,43 @@
 
         .form-group {
           margin-bottom: 24px;
+          position: relative;
 
           label {
             display: block;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
             color: $blue;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            position: relative;
+            
+            &::after {
+              content: "";
+              position: absolute;
+              bottom: -4px;
+              left: 0;
+              width: 30px;
+              height: 2px;
+              background: $pinkred;
+              border-radius: 1px;
+            }
           }
 
           .booking-select {
             width: 100%;
-            padding: 12px;
-            border: 1px solid $lightgrey;
-            border-radius: 8px;
+            padding: 14px 16px;
+            border: 2px solid $lightgrey;
+            border-radius: 12px;
             font-size: 14px;
             outline: none;
-            transition: border-color 0.3s ease;
+            transition: all 0.3s ease;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 
             &:focus {
               border-color: $pinkred;
+              box-shadow: 0 0 0 3px rgba(248, 57, 90, 0.1);
+              transform: translateY(-1px);
             }
           }
 
@@ -545,32 +587,66 @@
             display: flex;
             gap: 8px;
             font-size: 32px;
+            padding: 8px 0;
+            
+            span {
+              cursor: pointer;
+              transition: all 0.2s ease;
+              
+              &:hover {
+                transform: scale(1.2);
+                filter: drop-shadow(0 2px 4px rgba(255, 215, 0, 0.3));
+              }
+            }
           }
 
           textarea {
             width: 100%;
-            padding: 12px;
-            border: 1px solid $lightgrey;
-            border-radius: 8px;
+            padding: 16px;
+            border: 2px solid $lightgrey;
+            border-radius: 12px;
             font-size: 14px;
             font-family: inherit;
             resize: vertical;
             outline: none;
-            transition: border-color 0.3s ease;
+            transition: all 0.3s ease;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            min-height: 120px;
 
             &:focus {
               border-color: $pinkred;
+              box-shadow: 0 0 0 3px rgba(248, 57, 90, 0.1);
+              transform: translateY(-1px);
+            }
+
+            &::placeholder {
+              color: #adb5bd;
+              font-style: italic;
             }
           }
         }
 
         .detailed-ratings {
           margin-bottom: 24px;
+          background: #f8f9fa;
+          padding: 20px;
+          border-radius: 12px;
+          border: 1px solid #e9ecef;
 
           h4 {
             font-size: 16px;
             color: $blue;
             margin-bottom: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            
+            &::before {
+              content: "⭐";
+              font-size: 18px;
+            }
           }
 
           .rating-row {
@@ -578,43 +654,65 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 12px;
-            padding: 8px 0;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            transition: all 0.2s ease;
+
+            &:hover {
+              border-color: $pinkred;
+              box-shadow: 0 2px 8px rgba(248, 57, 90, 0.1);
+            }
 
             label {
               font-size: 14px;
               color: $darkgrey;
-              font-weight: 500;
+              font-weight: 600;
               margin: 0;
+              text-transform: capitalize;
             }
 
             .star-rating-small {
               display: flex;
               gap: 4px;
               font-size: 20px;
+              
+              span {
+                cursor: pointer;
+                transition: all 0.2s ease;
+                
+                &:hover {
+                  transform: scale(1.15);
+                  filter: drop-shadow(0 1px 2px rgba(255, 215, 0, 0.3));
+                }
+              }
             }
           }
         }
 
         .modal-actions {
           display: flex;
-          gap: 12px;
+          gap: 16px;
           justify-content: flex-end;
-          margin-top: 24px;
+          margin-top: 32px;
           padding-top: 24px;
-          border-top: 1px solid $lightgrey;
+          border-top: 2px solid #e9ecef;
 
           @include sm {
             flex-direction: column;
           }
 
           button {
-            padding: 12px 32px;
-            border-radius: 8px;
+            padding: 14px 32px;
+            border-radius: 12px;
             font-size: 15px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
             border: none;
+            position: relative;
+            overflow: hidden;
 
             @include sm {
               width: 100%;
@@ -622,31 +720,74 @@
 
             &.cancel-btn {
               background: white;
-              border: 1px solid $lightgrey;
+              border: 2px solid $lightgrey;
               color: $darkgrey;
 
               &:hover {
-                background: $lightgrey;
+                background: #f8f9fa;
+                border-color: $darkgrey;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
               }
             }
 
             &.submit-btn {
-              background: $pinkred;
+              background: linear-gradient(135deg, $pinkred 0%, darken($pinkred, 10%) 100%);
               color: white;
+              box-shadow: 0 4px 15px rgba(248, 57, 90, 0.3);
+
+              &::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+                transition: left 0.5s;
+              }
 
               &:hover {
-                background: darken($pinkred, 10%);
-                @include shadow;
+                background: linear-gradient(135deg, darken($pinkred, 5%) 0%, darken($pinkred, 15%) 100%);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(248, 57, 90, 0.4);
+
+                &::before {
+                  left: 100%;
+                }
               }
 
               &:disabled {
                 opacity: 0.6;
                 cursor: not-allowed;
+                transform: none;
+                box-shadow: 0 4px 15px rgba(248, 57, 90, 0.2);
               }
             }
           }
         }
       }
+    }
+  }
+
+  // Animation keyframes
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
     }
   }
 }

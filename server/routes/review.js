@@ -356,4 +356,52 @@ async function updateListingRating(listingId) {
   }
 }
 
+// REPORT REVIEW
+router.post('/:reviewId/report', verifyToken, async (req, res) => {
+  try {
+    const { reviewId } = req.params;
+    const { reason } = req.body;
+    const userId = req.user.id;
+
+    console.log(`User ${userId} reporting review ${reviewId} for reason: ${reason}`);
+
+    // Find the review
+    const review = await Review.findById(reviewId);
+    if (!review) {
+      return res.status(404).json({ message: "Review not found" });
+    }
+
+    // Check if user has already reported this review
+    const existingReport = review.reportedBy.find(
+      report => report.user.toString() === userId
+    );
+
+    if (existingReport) {
+      return res.status(400).json({ message: "You have already reported this review" });
+    }
+
+    // Add the report
+    review.reportedBy.push({
+      user: userId,
+      reason: reason || 'Inappropriate content',
+      reportedAt: new Date()
+    });
+
+    review.reportCount = review.reportedBy.length;
+    review.reported = true;
+
+    await review.save();
+
+    console.log(`Review ${reviewId} reported successfully. Total reports: ${review.reportCount}`);
+
+    res.status(200).json({
+      message: "Review reported successfully",
+      reportCount: review.reportCount
+    });
+  } catch (err) {
+    console.error('Error reporting review:', err);
+    res.status(500).json({ message: "Failed to report review", error: err.message });
+  }
+});
+
 module.exports = router;

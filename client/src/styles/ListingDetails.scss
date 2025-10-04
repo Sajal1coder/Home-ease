@@ -45,6 +45,36 @@
         margin: 0;
       }
     }
+
+    .share-button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: $pinkred;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: darken($pinkred, 10%);
+        transform: translateY(-2px);
+        @include shadow;
+      }
+
+      span {
+        font-weight: 600;
+      }
+
+      @include sm {
+        padding: 10px 16px;
+        font-size: 14px;
+      }
+    }
   }
 
   .photos {
@@ -244,6 +274,117 @@
           background-color: $grey;
         }
       }
+    }
+  }
+
+  // Share Modal Styles (reusing from ListingCard)
+  .share-modal-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: rgba(0, 0, 0, 0.7) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 99999 !important;
+
+    .share-modal {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      min-width: 300px;
+      max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: modalSlideIn 0.3s ease;
+
+      h4 {
+        margin: 0 0 20px 0;
+        color: $blue;
+        font-size: 18px;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      .share-options {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+
+        .share-option {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+          padding: 16px 12px;
+          border: 1px solid $lightgrey;
+          border-radius: 12px;
+          background: white;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-size: 24px;
+
+          &:hover {
+            border-color: $pinkred;
+            background: rgba($pinkred, 0.05);
+            transform: translateY(-2px);
+            @include shadow-sm;
+          }
+
+          span {
+            font-size: 12px;
+            font-weight: 600;
+            color: $darkgrey;
+          }
+
+          &.native {
+            font-size: 16px;
+            svg {
+              color: $pinkred;
+            }
+          }
+
+          &.copy {
+            &:hover {
+              border-color: #6c757d;
+              background: rgba(#6c757d, 0.05);
+            }
+          }
+
+          &.whatsapp {
+            &:hover {
+              border-color: #25d366;
+              background: rgba(#25d366, 0.05);
+            }
+          }
+
+          &.facebook {
+            &:hover {
+              border-color: #1877f2;
+              background: rgba(#1877f2, 0.05);
+            }
+          }
+
+          &.twitter {
+            &:hover {
+              border-color: #1da1f2;
+              background: rgba(#1da1f2, 0.05);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9) translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
     }
   }
 }

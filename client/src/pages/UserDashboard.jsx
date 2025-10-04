@@ -4,13 +4,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import { 
   Person, 
   Home, 
+  CalendarToday, 
   Favorite, 
-  BookOnline, 
-  Settings,
-  Edit,
+  Star, 
   Verified,
-  Star,
-  Chat
+  Chat,
+  Delete,
+  Edit,
+  BookOnline,
+  Settings
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import { setLogin } from '../redux/state';
@@ -326,6 +328,28 @@ const UserDashboard = () => {
               <span><Star /> {listing.averageRating?.toFixed(1) || 'New'}</span>
               <span>{listing.totalBookings || 0} bookings</span>
             </div>
+            <div className="listing-actions">
+              <button 
+                className="edit-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/edit-property/${listing._id}`);
+                }}
+                title="Edit Property"
+              >
+                <Edit />
+              </button>
+              <button 
+                className="delete-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteProperty(listing._id, listing.title || `${listing.city}, ${listing.country}`);
+                }}
+                title="Delete Property"
+              >
+                <Delete />
+              </button>
+            </div>
           </div>
         ))}
         
@@ -339,6 +363,34 @@ const UserDashboard = () => {
       </div>
     </div>
   );
+
+  const handleDeleteProperty = async (propertyId, propertyTitle) => {
+    if (!window.confirm(`Are you sure you want to delete "${propertyTitle}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/listings/${propertyId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success('Property deleted successfully');
+        // Remove the property from the local state
+        setMyListings(prev => prev.filter(listing => listing._id !== propertyId));
+      } else {
+        toast.error(data.message || 'Failed to delete property');
+      }
+    } catch (error) {
+      console.error('Error deleting property:', error);
+      toast.error('Failed to delete property');
+    }
+  };
 
   const startChat = async (hostId, listingId) => {
     // Validate inputs

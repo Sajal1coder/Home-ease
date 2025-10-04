@@ -7,7 +7,7 @@ import "../styles/navbar.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { setLogout } from "../redux/state";
 import LazyImage from "./LazyImage";
-import MobileSearchModal from "./MobileSearchModal";
+import SearchDropdown from "./SearchDropdown";
 import API_BASE_URL from "../config";
 
 const Navbar = () => {
@@ -18,8 +18,6 @@ const Navbar = () => {
 
   const dispatch = useDispatch();
 
-  const [search, setSearch] = useState("")
-
   const navigate = useNavigate()
 
   return (
@@ -29,23 +27,10 @@ const Navbar = () => {
       </a>
 
       <div className="navbar_search">
-        <input
-          type="text"
-          placeholder="Search ..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          onKeyPress={(e) => {
-            if (e.key === 'Enter' && search !== "") {
-              navigate(`/properties/search/${search}`);
-            }
-          }}
+        <SearchDropdown 
+          isMobile={false}
+          onSearch={() => {}}
         />
-        <IconButton disabled={search === ""}>
-          <Search
-            sx={{ color: variables.pinkred }}
-            onClick={() => {navigate(`/properties/search/${search}`)}}
-          />
-        </IconButton>
       </div>
 
       {/* Mobile Search Icon */}
@@ -116,9 +101,11 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Search Modal */}
-      <MobileSearchModal 
+      <SearchDropdown 
+        isMobile={true}
         isOpen={mobileSearchOpen} 
-        onClose={() => setMobileSearchOpen(false)} 
+        onClose={() => setMobileSearchOpen(false)}
+        onSearch={() => {}}
       />
     </div>
   );

@@ -18,22 +18,9 @@
   }
 
   &_search {
-    border: 1px solid $grey;
-    border-radius: 30px;
-    height: 50px;
-    padding: 0px 20px;
-    display: flex;
-    gap: 40px;
-    align-items: center;
-
-    input {
-      border: none;
-      outline: none;
-    }
-
-    &:hover {
-      @include shadow;
-    }
+    flex: 1;
+    max-width: 500px;
+    margin: 0 40px;
 
     @include lg {
       display: none;

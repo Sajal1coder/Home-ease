@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const router = express.Router();
 const User = require('../models/User');
 const Listing = require('../models/Listing');
@@ -68,15 +69,24 @@ router.patch('/users/:userId/verify', verifyToken, isAdmin, async (req, res) => 
     const { userId } = req.params;
     const { verified } = req.body;
 
+    console.log(`Admin ${req.user.id} attempting to ${verified ? 'verify' : 'unverify'} user ${userId}`);
+
+    const updateData = { 
+      verified,
+      verifiedAt: verified ? new Date() : null
+    };
+
     const user = await User.findByIdAndUpdate(
       userId,
-      { verified },
+      updateData,
       { new: true }
     ).select('-password');
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+
+    console.log(`User ${userId} ${verified ? 'verified' : 'unverified'} successfully`);
 
     res.status(200).json({
       message: `User ${verified ? 'verified' : 'unverified'} successfully`,
@@ -94,15 +104,25 @@ router.patch('/users/:userId/block', verifyToken, isAdmin, async (req, res) => {
     const { userId } = req.params;
     const { blocked } = req.body;
 
+    console.log(`Admin ${req.user.id} attempting to ${blocked ? 'block' : 'unblock'} user ${userId}`);
+
+    // Don't allow blocking admin users
+    const targetUser = await User.findById(userId);
+    if (!targetUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (targetUser.isAdmin && blocked) {
+      return res.status(400).json({ message: "Cannot block admin users" });
+    }
+
     const user = await User.findByIdAndUpdate(
       userId,
       { blocked },
       { new: true }
     ).select('-password');
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    console.log(`User ${userId} ${blocked ? 'blocked' : 'unblocked'} successfully`);
 
     res.status(200).json({
       message: `User ${blocked ? 'blocked' : 'unblocked'} successfully`,
@@ -111,6 +131,38 @@ router.patch('/users/:userId/block', verifyToken, isAdmin, async (req, res) => {
   } catch (err) {
     console.error('Error blocking user:', err);
     res.status(500).json({ message: "Failed to block user", error: err.message });
+  }
+});
+
+// DELETE USER
+router.delete('/users/:userId', verifyToken, isAdmin, async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    console.log(`Admin ${req.user.id} attempting to delete user ${userId}`);
+
+    // Don't allow deleting admin users
+    const targetUser = await User.findById(userId);
+    if (!targetUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (targetUser.isAdmin) {
+      return res.status(400).json({ message: "Cannot delete admin users" });
+    }
+
+    // Delete user and related data
+    await User.findByIdAndDelete(userId);
+    await Listing.deleteMany({ creator: userId });
+    await Review.deleteMany({ user: userId });
+    await Booking.deleteMany({ $or: [{ customerId: userId }, { hostId: userId }] });
+
+    console.log(`User ${userId} deleted successfully`);
+
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (err) {
+    console.error('Error deleting user:', err);
+    res.status(500).json({ message: "Failed to delete user", error: err.message });
   }
 });
 
@@ -132,20 +184,31 @@ router.get('/properties', verifyToken, isAdmin, async (req, res) => {
 router.patch('/properties/:propertyId/verify', verifyToken, isAdmin, async (req, res) => {
   try {
     const { propertyId } = req.params;
-    const { verified } = req.body;
+    const { verified, adminNotes } = req.body;
+
+    console.log(`Admin ${req.user.id} attempting to ${verified ? 'verify' : 'reject'} property ${propertyId}`);
+
+    const updateData = { 
+      verified,
+      verifiedAt: verified ? new Date() : null,
+      rejectedAt: !verified ? new Date() : null,
+      adminNotes: adminNotes || "",
+      // Remove rejected properties from public view
+      active: verified ? true : false,
+      status: verified ? 'active' : 'rejected'
+    };
 
     const property = await Listing.findByIdAndUpdate(
       propertyId,
-      { 
-        verified,
-        verifiedAt: verified ? new Date() : null
-      },
+      updateData,
       { new: true }
-    );
+    ).populate('creator', 'firstName lastName email');
 
     if (!property) {
       return res.status(404).json({ message: "Property not found" });
     }
+
+    console.log(`Property ${propertyId} ${verified ? 'verified' : 'rejected'} successfully`);
 
     res.status(200).json({
       message: `Property ${verified ? 'verified' : 'rejected'} successfully`,
@@ -204,6 +267,8 @@ router.patch('/reviews/:reviewId/approve', verifyToken, isAdmin, async (req, res
   try {
     const { reviewId } = req.params;
 
+    console.log(`Admin ${req.user.id} approving review ${reviewId}`);
+
     const review = await Review.findByIdAndUpdate(
       reviewId,
       { 
@@ -212,11 +277,14 @@ router.patch('/reviews/:reviewId/approve', verifyToken, isAdmin, async (req, res
         reportReason: null
       },
       { new: true }
-    );
+    ).populate('user', 'firstName lastName email')
+     .populate('listing', 'title city');
 
     if (!review) {
       return res.status(404).json({ message: "Review not found" });
     }
+
+    console.log(`Review ${reviewId} approved successfully`);
 
     res.status(200).json({
       message: "Review approved successfully",
@@ -233,15 +301,20 @@ router.patch('/reviews/:reviewId/reject', verifyToken, isAdmin, async (req, res)
   try {
     const { reviewId } = req.params;
 
+    console.log(`Admin ${req.user.id} rejecting review ${reviewId}`);
+
     const review = await Review.findByIdAndUpdate(
       reviewId,
       { status: 'rejected' },
       { new: true }
-    );
+    ).populate('user', 'firstName lastName email')
+     .populate('listing', 'title city');
 
     if (!review) {
       return res.status(404).json({ message: "Review not found" });
     }
+
+    console.log(`Review ${reviewId} rejected successfully`);
 
     res.status(200).json({
       message: "Review rejected successfully",
@@ -350,6 +423,151 @@ router.get('/analytics', verifyToken, isAdmin, async (req, res) => {
   } catch (err) {
     console.error('Error fetching analytics:', err);
     res.status(500).json({ message: "Failed to fetch analytics", error: err.message });
+  }
+});
+
+// CREATE ANONYMOUS REVIEW (Admin Only)
+router.post('/reviews/create-anonymous', verifyToken, isAdmin, async (req, res) => {
+  try {
+    const { listingId, rating, comment, ratings, anonymousName } = req.body;
+
+    console.log(`Admin ${req.user.id} creating anonymous review for listing ${listingId}`);
+
+    // Validate required fields
+    if (!listingId || !rating || !comment) {
+      return res.status(400).json({ message: "Listing ID, rating, and comment are required" });
+    }
+
+    // Check if listing exists
+    const listing = await Listing.findById(listingId);
+    if (!listing) {
+      return res.status(404).json({ message: "Listing not found" });
+    }
+
+    // Create anonymous user object (not saved to database)
+    const anonymousUser = {
+      _id: new mongoose.Types.ObjectId(),
+      firstName: anonymousName || 'Anonymous',
+      lastName: 'User',
+      profileImagePath: 'public/default-avatar.png'
+    };
+
+    // Create review with anonymous user
+    const newReview = new Review({
+      user: anonymousUser._id,
+      listing: listingId,
+      rating: Math.max(1, Math.min(5, rating)), // Ensure rating is between 1-5
+      comment,
+      ratings: ratings || {
+        cleanliness: rating,
+        accuracy: rating,
+        communication: rating,
+        location: rating,
+        checkIn: rating,
+        value: rating
+      },
+      status: 'approved', // Auto-approve admin-created reviews
+      isAnonymous: true,
+      anonymousUserData: anonymousUser,
+      createdAt: new Date()
+    });
+
+    await newReview.save();
+
+    // Populate the review for response
+    const populatedReview = await Review.findById(newReview._id)
+      .populate('listing', 'title city country');
+
+    console.log(`Anonymous review created successfully for listing ${listingId}`);
+
+    res.status(201).json({
+      message: "Anonymous review created successfully",
+      review: {
+        ...populatedReview.toObject(),
+        user: anonymousUser // Override with anonymous user data
+      }
+    });
+  } catch (err) {
+    console.error('Error creating anonymous review:', err);
+    res.status(500).json({ message: "Failed to create anonymous review", error: err.message });
+  }
+});
+
+// GET REPORTED REVIEWS (Admin Only)
+router.get('/reviews/reported', verifyToken, isAdmin, async (req, res) => {
+  try {
+    console.log(`Admin ${req.user.id} fetching reported reviews`);
+
+    const reportedReviews = await Review.find({ 
+      reported: true,
+      reportCount: { $gt: 0 }
+    })
+    .populate('user', 'firstName lastName email profileImagePath')
+    .populate('listing', 'title city country')
+    .populate('reportedBy.user', 'firstName lastName email')
+    .sort({ reportCount: -1, updatedAt: -1 });
+
+    console.log(`Found ${reportedReviews.length} reported reviews`);
+
+    res.status(200).json(reportedReviews);
+  } catch (err) {
+    console.error('Error fetching reported reviews:', err);
+    res.status(500).json({ message: "Failed to fetch reported reviews", error: err.message });
+  }
+});
+
+// MODERATE REPORTED REVIEW (Admin Only)
+router.patch('/reviews/:reviewId/moderate', verifyToken, isAdmin, async (req, res) => {
+  try {
+    const { reviewId } = req.params;
+    const { action, adminNotes } = req.body; // action: 'approve', 'reject', 'dismiss'
+
+    console.log(`Admin ${req.user.id} moderating review ${reviewId} with action: ${action}`);
+
+    const review = await Review.findById(reviewId);
+    if (!review) {
+      return res.status(404).json({ message: "Review not found" });
+    }
+
+    let updateData = {
+      adminNotes: adminNotes || ""
+    };
+
+    switch (action) {
+      case 'approve':
+        updateData.status = 'approved';
+        updateData.reported = false;
+        updateData.reportCount = 0;
+        updateData.reportedBy = [];
+        break;
+      case 'reject':
+        updateData.status = 'rejected';
+        break;
+      case 'dismiss':
+        updateData.reported = false;
+        updateData.reportCount = 0;
+        updateData.reportedBy = [];
+        break;
+      default:
+        return res.status(400).json({ message: "Invalid action. Use 'approve', 'reject', or 'dismiss'" });
+    }
+
+    const updatedReview = await Review.findByIdAndUpdate(
+      reviewId,
+      updateData,
+      { new: true }
+    ).populate('user', 'firstName lastName email')
+     .populate('listing', 'title city country');
+
+    console.log(`Review ${reviewId} moderated successfully with action: ${action}`);
+
+    res.status(200).json({
+      message: `Review ${action}ed successfully`,
+      review: updatedReview
+    });
+  } catch (err) {
+    console.error('Error moderating review:', err);
+    res.status(500).json({ message: "Failed to moderate review", error: err.message });
   }
 });
 

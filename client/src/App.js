@@ -15,6 +15,7 @@ const HomePages = lazy(() => import("./pages/HomePages"));
 const RegisterPage = lazy(() => import("./pages/RegisterPage"));
 const LoginPages = lazy(() => import("./pages/LoginPages"));
 const CreateListing = lazy(() => import("./pages/CreateListing"));
+const EditProperty = lazy(() => import("./pages/EditProperty"));
 const ListingDetails = lazy(() => import("./pages/ListingDetails"));
 // Deprecated pages removed: TripList, WishList, PropertyList, ReservationList
 const CategoryPage = lazy(() => import("./pages/CategoryPage"));
@@ -70,6 +71,7 @@ function App() {
               <Route path="/register" element={<RegisterPage/>}/>
               <Route path="/login" element={<LoginPages/>}/>
               <Route path="/create-listing" element={<CreateListing/>}/>
+              <Route path="/edit-property/:listingId" element={<EditProperty/>}/>
               <Route path="/properties/:listingId" element={<ListingDetails/>}/>
               <Route path="/properties/category/:category" element={<CategoryPage/>}/>
               <Route path="/properties/search/:search" element={<SearchPage/>}/>
