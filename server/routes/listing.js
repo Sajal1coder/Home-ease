@@ -121,6 +121,27 @@ router.get("/", async (req, res) => {
   const qCategory = req.query.category;
 
   try {
+    // Debug: Check total listings in database
+    const totalListings = await Listing.countDocuments();
+    const activeListings = await Listing.countDocuments({ active: true });
+    const statusActiveListings = await Listing.countDocuments({ status: 'active' });
+    const bothActiveListings = await Listing.countDocuments({ active: true, status: 'active' });
+    
+    // Check what status values actually exist
+    const statusValues = await Listing.distinct('status');
+    const activeValues = await Listing.distinct('active');
+    
+    const debugInfo = {
+      total: totalListings,
+      active: activeListings,
+      statusActive: statusActiveListings,
+      bothActive: bothActiveListings,
+      category: qCategory,
+      statusValues: statusValues,
+      activeValues: activeValues
+    };
+    
+    console.log('Database Debug:', debugInfo);
 
     let listings;
     if (qCategory) {
@@ -130,13 +151,43 @@ router.get("/", async (req, res) => {
         active: true
       }).populate("creator");
     } else {
-      // Get all active listings
-      listings = await Listing.find({ active: true }).populate("creator");
+      // Start with the most flexible query and narrow down
+      listings = await Listing.find({}).populate("creator");
+      console.log('Total listings found:', listings.length);
+      
+      if (listings.length > 0) {
+        // Log the first few listings to understand the data structure
+        console.log('Sample listing structure:', {
+          active: listings[0]?.active,
+          status: listings[0]?.status,
+          title: listings[0]?.title
+        });
+        
+        // For local testing, show all active properties regardless of status
+        listings = listings.filter(listing => {
+          // Just check if active is true
+          return listing.active === true;
+        });
+        
+        console.log('Filtered listings count:', listings.length);
+      }
     }
+
+    console.log('Found listings:', listings.length);
 
     // Add review statistics to each listing
     const listingsWithStats = await addReviewStats(listings);
 
+    // Temporarily include debug info in response
+    const response = {
+      listings: listingsWithStats,
+      debug: debugInfo,
+      message: `Found ${listingsWithStats.length} listings out of ${totalListings} total`
+    };
+
+    // For now, return just the listings array to maintain compatibility
+    // but log the full debug info
+    console.log('Sending response:', response);
     res.status(200).json(listingsWithStats);
   } catch (err) {
     res.status(404).json({ message: "Failed to fetch listings", error: err.message });
@@ -144,6 +195,64 @@ router.get("/", async (req, res) => {
   }
 });
 
+/* TEMPORARY - Get ALL listings without filtering */
+router.get("/all", async (req, res) => {
+  try {
+    const allListings = await Listing.find({}).populate("creator").limit(10);
+    
+    const debugInfo = {
+      total: await Listing.countDocuments(),
+      listings: allListings.map(listing => ({
+        id: listing._id,
+        title: listing.title,
+        active: listing.active,
+        status: listing.status,
+        category: listing.category,
+        price: listing.price,
+        creator: listing.creator?.firstName || 'Unknown'
+      }))
+    };
+    
+    res.status(200).json(debugInfo);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* DEBUG ENDPOINT - Get database statistics */
+router.get("/debug", async (req, res) => {
+  try {
+    const totalListings = await Listing.countDocuments();
+    const activeListings = await Listing.countDocuments({ active: true });
+    const statusActiveListings = await Listing.countDocuments({ status: 'active' });
+    const bothActiveListings = await Listing.countDocuments({ active: true, status: 'active' });
+    
+    // Get all possible status and active values
+    const statusValues = await Listing.distinct('status');
+    const activeValues = await Listing.distinct('active');
+    
+    // Get a sample of listings to see their structure
+    const sampleListings = await Listing.find({}).limit(3).select('title active status category createdAt');
+    
+    const debugInfo = {
+      counts: {
+        total: totalListings,
+        active: activeListings,
+        statusActive: statusActiveListings,
+        bothActive: bothActiveListings
+      },
+      distinctValues: {
+        statusValues: statusValues,
+        activeValues: activeValues
+      },
+      sampleListings: sampleListings
+    };
+    
+    res.status(200).json(debugInfo);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 /* GET LISTINGS BY SEARCH */
 router.get("/search/:search", async (req, res) => {

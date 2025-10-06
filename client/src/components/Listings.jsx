@@ -21,9 +21,15 @@ const Listings = () => {
   const maxPrice = useSelector((state) => state.maxPrice||1000000);
   const listings = useSelector((state) => state.listings)||[];
 
+  console.log('Redux State - listings:', listings);
+  console.log('Redux State - selectedCategory:', selectedCategory);
+  console.log('Redux State - loading:', loading);
+
   const filteredListings = listings.filter(
     (listing) => listing.price >= minPrice && listing.price <= maxPrice
   );
+
+  console.log('Filtered listings:', filteredListings.length);
 
   const sortedListings = [...filteredListings].sort((a, b) => {
     if (sortOrder === "lowToHigh") {
@@ -50,25 +56,33 @@ const Listings = () => {
   const getFeedListings = async () => {
     try {
       dispatch(setLoading(true));
-      const response = await fetch(
-        selectedCategory !== "All"
-          ? `${API_BASE_URL}/properties?category=${selectedCategory}`
-          : `${API_BASE_URL}/properties`,
-        {
-          method: "GET",
-        }
-      );
+      const url = selectedCategory !== "All"
+        ? `${API_BASE_URL}/properties?category=${selectedCategory}`
+        : `${API_BASE_URL}/properties`;
+      
+      console.log('Fetching from URL:', url);
+      console.log('Selected Category:', selectedCategory);
+      
+      const response = await fetch(url, {
+        method: "GET",
+      });
+
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
 
       if (!response.ok) {
-        throw new Error('Failed to fetch listings');
+        throw new Error(`Failed to fetch listings: ${response.status} ${response.statusText}`);
       }
 
       const data = await response.json();
+      console.log('Received data:', data);
+      console.log('Data length:', data.length);
+      
       dispatch(setListings({ listings: data }));
       dispatch(setLoading(false));
     } catch (err) {
-      console.error("Fetch Listings Failed", err.message);
-      toast.error('Failed to load properties. Please try again.');
+      console.error("Fetch Listings Failed", err);
+      toast.error(`Failed to load properties: ${err.message}`);
       dispatch(setLoading(false));
     }
   };
