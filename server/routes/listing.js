@@ -115,23 +115,23 @@ router.post("/create", upload.fields([{ name: 'listingPhotos', maxCount: 5 }, { 
   }
 });
 
+
 /* GET LISTINGS BY CATEGORY */
 router.get("/", async (req, res) => {
   const qCategory = req.query.category;
 
   try {
+
     let listings;
     if (qCategory) {
+      // For category filtering, also just check active status
       listings = await Listing.find({ 
         category: qCategory, 
-        active: true, 
-        status: 'active' 
+        active: true
       }).populate("creator");
     } else {
-      listings = await Listing.find({ 
-        active: true, 
-        status: 'active' 
-      }).populate("creator");
+      // Get all active listings
+      listings = await Listing.find({ active: true }).populate("creator");
     }
 
     // Add review statistics to each listing
@@ -144,34 +144,20 @@ router.get("/", async (req, res) => {
   }
 });
 
+
 /* GET LISTINGS BY SEARCH */
 router.get("/search/:search", async (req, res) => {
   const { search } = req.params;
 
   try {
-    let listings = [];
-
-    if (search === "all") {
-      listings = await Listing.find({ 
-        active: true, 
-        status: 'active' 
-      }).populate("creator");
-    } else {
-      listings = await Listing.find({
-        $and: [
-          { active: true },
-          { status: 'active' },
-          {
-            $or: [
-              { category: { $regex: search, $options: "i" } },
-              { title: { $regex: search, $options: "i" } },
-              { city: { $regex: search, $options: "i" } },
-              { country: { $regex: search, $options: "i" } },
-            ]
-          }
-        ]
-      }).populate("creator");
-    }
+    let listings = await Listing.find({
+      $or: [
+        { category: { $regex: search, $options: "i" } },
+        { city: { $regex: search, $options: "i" } },
+        { country: { $regex: search, $options: "i" } },
+        { type: { $regex: search, $options: "i" } },
+      ],
+    }).populate("creator");
 
     // Add review statistics to each listing
     const listingsWithStats = await addReviewStats(listings);
