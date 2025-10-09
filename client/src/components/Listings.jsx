@@ -70,9 +70,6 @@ const Listings = () => {
       console.log('Response status:', response.status);
       console.log('Response ok:', response.ok);
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch listings: ${response.status} ${response.statusText}`);
-      }
 
       const data = await response.json();
       console.log('Received data:', data);
