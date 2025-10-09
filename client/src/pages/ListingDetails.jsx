@@ -18,6 +18,7 @@ import API_BASE_URL from '../config';
 import CheckoutForm from "../components/CheckoutForm";
 import LazyImage from "../components/LazyImage";
 import { toast } from 'react-toastify';
+import { useImagePreload } from '../hooks/useImagePreload';
 
 const stripeKey = process.env.REACT_APP_STRIPE_ID ;
 const stripePromise = loadStripe(stripeKey);
@@ -199,6 +200,13 @@ const ListingDetails = () => {
 
   const { listingId } = useParams();
   const [listing, setListing] = useState(null);
+
+  // Preload the first image when listing data is available
+  const firstImageSrc = listing?.listingPhotoPaths?.[0] 
+    ? `${API_BASE_URL}/${listing.listingPhotoPaths[0].replace("public", "")}`
+    : null;
+  
+  useImagePreload(firstImageSrc);
 
   const getListingDetails = async () => {
     try {
@@ -392,7 +400,10 @@ const ListingDetails = () => {
             >
               <LazyImage
                 src={`${API_BASE_URL}/${item.replace("public", "")}`}
-                alt="listing photo"
+                alt={`Property photo ${index + 1}`}
+                priority={index === 0}
+                width={index === 0 ? "600" : undefined}
+                height={index === 0 ? "400" : undefined}
               />
             </div>
           ))}

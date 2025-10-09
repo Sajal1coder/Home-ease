@@ -13,7 +13,10 @@ const userRoutes=require("./routes/user.js");
 const { Server } = require("socket.io");
 const setupSocket = require('./socket');
 const io = new Server(server, {
-  cors: { origin: "http://localhost:3000", credentials: true }
+  cors: { 
+    origin: ["http://localhost:3000", "https://homease-taupe.vercel.app"], 
+    credentials: true 
+  }
 });
 setupSocket(io);
 app.use(cors({

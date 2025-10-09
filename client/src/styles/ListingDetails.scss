@@ -88,6 +88,7 @@
       overflow: hidden;
       border-radius: 10px;
       transition: all 0.3s ease;
+      position: relative;
 
       &:hover {
         transform: scale(1.05);
@@ -100,7 +101,22 @@
 
       img {
         max-width: 280px;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 3/2; // Fixed aspect ratio to prevent layout shifts
+        object-fit: cover;
         transition: filter 0.3s ease;
+        display: block;
+      }
+
+      // First image (LCP element) gets priority styling
+      &:first-child img {
+        max-width: 600px;
+        aspect-ratio: 3/2;
+        
+        @include lg {
+          max-width: 100%;
+        }
       }
     }
   }

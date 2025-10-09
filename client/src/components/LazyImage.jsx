@@ -1,14 +1,26 @@
 // components/LazyImage.jsx
 import React from "react";
 
-const LazyImage = ({ src, alt, className = "", style = {}, ...props }) => {
+const LazyImage = ({ 
+  src, 
+  alt, 
+  className = "", 
+  style = {}, 
+  priority = false,
+  width,
+  height,
+  ...props 
+}) => {
   return (
     <img
       src={src}
       alt={alt}
-      loading="lazy"
+      loading={priority ? "eager" : "lazy"}
+      fetchPriority={priority ? "high" : "auto"}
       className={className}
       style={style}
+      width={width}
+      height={height}
       {...props}
     />
   );

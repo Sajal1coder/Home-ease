@@ -131,49 +131,7 @@ router.get("/", async (req, res) => {
     const statusValues = await Listing.distinct('status');
     const activeValues = await Listing.distinct('active');
     
-    const debugInfo = {
-      total: totalListings,
-      active: activeListings,
-      statusActive: statusActiveListings,
-      bothActive: bothActiveListings,
-      category: qCategory,
-      statusValues: statusValues,
-      activeValues: activeValues
-    };
-    
-    console.log('Database Debug:', debugInfo);
-
-    let listings;
-    if (qCategory) {
-      // For category filtering, also just check active status
-      listings = await Listing.find({ 
-        category: qCategory, 
-        active: true
-      }).populate("creator");
-    } else {
-      // Start with the most flexible query and narrow down
-      listings = await Listing.find({}).populate("creator");
-      console.log('Total listings found:', listings.length);
-      
-      if (listings.length > 0) {
-        // Log the first few listings to understand the data structure
-        console.log('Sample listing structure:', {
-          active: listings[0]?.active,
-          status: listings[0]?.status,
-          title: listings[0]?.title
-        });
-        
-        // For local testing, show all active properties regardless of status
-        listings = listings.filter(listing => {
-          // Just check if active is true
-          return listing.active === true;
-        });
-        
-        console.log('Filtered listings count:', listings.length);
-      }
-    }
-
-    console.log('Found listings:', listings.length);
+  
 
     // Add review statistics to each listing
     const listingsWithStats = await addReviewStats(listings);
@@ -185,9 +143,6 @@ router.get("/", async (req, res) => {
       message: `Found ${listingsWithStats.length} listings out of ${totalListings} total`
     };
 
-    // For now, return just the listings array to maintain compatibility
-    // but log the full debug info
-    console.log('Sending response:', response);
     res.status(200).json(listingsWithStats);
   } catch (err) {
     res.status(404).json({ message: "Failed to fetch listings", error: err.message });
