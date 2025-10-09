@@ -121,27 +121,25 @@ router.get("/", async (req, res) => {
   const qCategory = req.query.category;
 
   try {
-    // Debug: Check total listings in database
-    const totalListings = await Listing.countDocuments();
-    const activeListings = await Listing.countDocuments({ active: true });
-    const statusActiveListings = await Listing.countDocuments({ status: 'active' });
-    const bothActiveListings = await Listing.countDocuments({ active: true, status: 'active' });
+    let listings;
     
-    // Check what status values actually exist
-    const statusValues = await Listing.distinct('status');
-    const activeValues = await Listing.distinct('active');
-    
-  
+    if (qCategory) {
+      // Filter by category if specified
+      listings = await Listing.find({
+        category: qCategory,
+        active: true,
+        status: 'active'
+      }).populate("creator");
+    } else {
+      // Get all active listings
+      listings = await Listing.find({
+        active: true,
+        status: 'active'
+      }).populate("creator");
+    }
 
     // Add review statistics to each listing
     const listingsWithStats = await addReviewStats(listings);
-
-    // Temporarily include debug info in response
-    const response = {
-      listings: listingsWithStats,
-      debug: debugInfo,
-      message: `Found ${listingsWithStats.length} listings out of ${totalListings} total`
-    };
 
     res.status(200).json(listingsWithStats);
   } catch (err) {

@@ -13,21 +13,21 @@ const Listings = () => {
   const dispatch = useDispatch();
 
   const loading = useSelector((state) => state.loading);
-  const selectedCategory = useSelector((state) => state.selectedCategory || 'All');
+  const selectedCategory = useSelector((state) => state.selectedCategory);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(12);
-  const sortOrder = useSelector((state) => state.sortOrder || 'lowToHigh');
-  const minPrice = useSelector((state) => state.minPrice||0);
-  const maxPrice = useSelector((state) => state.maxPrice||1000000);
-  const listings = useSelector((state) => state.listings)||[];
+  const sortOrder = useSelector((state) => state.sortOrder);
+  const minPrice = useSelector((state) => state.minPrice);
+  const maxPrice = useSelector((state) => state.maxPrice);
+  const listings = useSelector((state) => state.listings);
 
   console.log('Redux State - listings:', listings);
   console.log('Redux State - selectedCategory:', selectedCategory);
   console.log('Redux State - loading:', loading);
 
-  const filteredListings = listings.filter(
+  const filteredListings = Array.isArray(listings) ? listings.filter(
     (listing) => listing.price >= minPrice && listing.price <= maxPrice
-  );
+  ) : [];
 
   console.log('Filtered listings:', filteredListings.length);
 

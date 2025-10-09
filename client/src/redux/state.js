@@ -3,6 +3,12 @@ import { createSlice} from "@reduxjs/toolkit"
 const initialState = {
   user: null,
   token: null,
+  listings: [],
+  selectedCategory: 'All',
+  sortOrder: 'lowToHigh',
+  minPrice: 0,
+  maxPrice: 100000,
+  loading: false,
 }
 
 export const userSlice = createSlice({
