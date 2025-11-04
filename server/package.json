@@ -23,7 +23,8 @@
     "seed": "node scripts/seedAll.js",
     "seed:users": "node scripts/seedUsers.js",
     "seed:properties": "node scripts/seedProperties.js",
-    "seed:images": "node scripts/createSampleImages.js"
+    "seed:images": "node scripts/createSampleImages.js",
+    "verify-search": "node scripts/setupAtlasSearch.js"
   },
   "keywords": [],
   "author": "",

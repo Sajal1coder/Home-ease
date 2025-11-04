@@ -109,5 +109,37 @@ const ListingSchema = new mongoose.Schema(
   { timestamps: true}
 )
 
+// Create text indexes for efficient search
+// This enables MongoDB's text search capabilities
+ListingSchema.index({ 
+  title: 'text', 
+  description: 'text',
+  city: 'text',
+  country: 'text',
+  province: 'text',
+  category: 'text',
+  type: 'text',
+  highlight: 'text'
+}, {
+  weights: {
+    title: 10,
+    city: 8,
+    category: 5,
+    type: 5,
+    description: 3,
+    highlight: 2,
+    country: 2,
+    province: 2
+  },
+  name: 'listing_text_search'
+});
+
+// Additional indexes for filtering and sorting
+ListingSchema.index({ price: 1 });
+ListingSchema.index({ createdAt: -1 });
+ListingSchema.index({ verified: 1, status: 1 });
+ListingSchema.index({ city: 1, status: 1 });
+ListingSchema.index({ category: 1, status: 1 });
+
 const Listing = mongoose.model("Listing", ListingSchema )
 module.exports = Listing

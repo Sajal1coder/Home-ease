@@ -1,0 +1,225 @@
+@import "./variables.scss";
+@import "./breakpoints.scss";
+
+.payment-failure-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  backdrop-filter: blur(4px);
+
+  .payment-failure-modal {
+    background: white;
+    border-radius: $radius-lg;
+    padding: 48px 40px;
+    max-width: 540px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    @include shadow-xl;
+
+    @include sm {
+      padding: 36px 24px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: transparent;
+      border: none;
+      color: $darkgrey;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      svg {
+        font-size: 24px;
+      }
+
+      &:hover {
+        background: $lightgrey;
+        color: $blue;
+      }
+    }
+
+    .error-icon-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 24px;
+
+      .error-icon {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(135deg, $error, lighten($error, 10%));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 40px rgba($error, 0.3);
+
+        svg {
+          font-size: 64px;
+          color: white;
+        }
+      }
+    }
+
+    h2 {
+      text-align: center;
+      color: $blue;
+      font-size: $font-size-3xl;
+      font-weight: 700;
+      margin: 0 0 12px 0;
+
+      @include sm {
+        font-size: $font-size-2xl;
+      }
+    }
+
+    .error-message {
+      text-align: center;
+      color: $darkgrey;
+      font-size: $font-size-lg;
+      margin: 0 0 32px 0;
+      line-height: 1.6;
+    }
+
+    .suggestions-card {
+      background: rgba($warning, 0.08);
+      border: 1px solid rgba($warning, 0.2);
+      border-radius: $radius-md;
+      padding: 24px;
+      margin-bottom: 32px;
+
+      h4 {
+        color: $blue;
+        font-size: $font-size-md;
+        font-weight: 700;
+        margin: 0 0 16px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+          padding: 10px 0;
+          color: $darkgrey;
+          font-size: $font-size-sm;
+          line-height: 1.6;
+
+          .bullet {
+            color: $warning;
+            font-size: $font-size-lg;
+            font-weight: 700;
+            flex-shrink: 0;
+          }
+        }
+      }
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+
+      @include sm {
+        flex-direction: column;
+      }
+
+      button {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 14px 20px;
+        border-radius: $radius-md;
+        font-size: $font-size-md;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+
+        svg {
+          font-size: 20px;
+        }
+      }
+
+      .retry-btn {
+        background: $pinkred;
+        color: white;
+
+        &:hover {
+          background: darken($pinkred, 10%);
+          @include shadow-lg;
+        }
+      }
+
+      .back-btn {
+        background: white;
+        color: $blue;
+        border: 2px solid $lightgrey;
+
+        &:hover {
+          border-color: $pinkred;
+          color: $pinkred;
+          @include shadow-sm;
+        }
+      }
+    }
+
+    .support-section {
+      text-align: center;
+      padding: 20px;
+      background: $lightgrey;
+      border-radius: $radius-md;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+
+      svg {
+        font-size: 24px;
+        color: $info;
+      }
+
+      p {
+        margin: 0;
+        color: $darkgrey;
+        font-size: $font-size-sm;
+
+        a {
+          color: $pinkred;
+          text-decoration: none;
+          font-weight: 600;
+          transition: color 0.3s ease;
+
+          &:hover {
+            color: darken($pinkred, 10%);
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+}

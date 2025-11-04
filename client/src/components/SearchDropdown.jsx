@@ -88,7 +88,7 @@ const SearchDropdown = ({
 
   // Handle input blur (with delay to allow clicks)
   const handleInputBlur = () => {
-    setTimeout(() => setShowDropdown(false), 150);
+    setTimeout(() => setShowDropdown(false), 200);
   };
 
   // Handle key press
@@ -158,7 +158,13 @@ const SearchDropdown = ({
                     <History />
                     <span>Recent Searches</span>
                   </div>
-                  <button className="clear-btn" onClick={clearPastSearches}>
+                  <button 
+                    className="clear-btn" 
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      clearPastSearches();
+                    }}
+                  >
                     Clear
                   </button>
                 </div>
@@ -167,7 +173,10 @@ const SearchDropdown = ({
                     <button
                       key={index}
                       className="suggestion-item past-search"
-                      onClick={() => handleSuggestionClick(item.text)}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        handleSuggestionClick(item.text);
+                      }}
                     >
                       <History />
                       <span>{item.text}</span>
@@ -190,7 +199,10 @@ const SearchDropdown = ({
                   <button
                     key={index}
                     className={`suggestion-chip ${suggestion.type}`}
-                    onClick={() => handleSuggestionClick(suggestion.text)}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      handleSuggestionClick(suggestion.text);
+                    }}
                   >
                     <span className="chip-text">{suggestion.text}</span>
                   </button>
@@ -237,7 +249,13 @@ const SearchDropdown = ({
                   <History />
                   <span>Recent Searches</span>
                 </div>
-                <button className="clear-btn" onClick={clearPastSearches}>
+                <button 
+                  className="clear-btn" 
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    clearPastSearches();
+                  }}
+                >
                   Clear
                 </button>
               </div>
@@ -246,7 +264,10 @@ const SearchDropdown = ({
                   <button
                     key={index}
                     className="suggestion-item past-search"
-                    onClick={() => handleSuggestionClick(item.text)}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      handleSuggestionClick(item.text);
+                    }}
                   >
                     <History />
                     <span>{item.text}</span>
@@ -269,7 +290,10 @@ const SearchDropdown = ({
                 <button
                   key={index}
                   className={`suggestion-item quick-suggestion ${suggestion.type}`}
-                  onClick={() => handleSuggestionClick(suggestion.text)}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    handleSuggestionClick(suggestion.text);
+                  }}
                 >
                   <span className="suggestion-text">{suggestion.text}</span>
                 </button>

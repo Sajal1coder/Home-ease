@@ -1,0 +1,757 @@
+@import "./variables.scss";
+@import "./breakpoints.scss";
+
+.property-details {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px 80px 80px;
+
+  @include xl {
+    padding: 32px 60px 80px;
+  }
+
+  @include lg {
+    padding: 32px 40px 80px;
+  }
+
+  @include sm {
+    padding: 24px 20px 60px;
+  }
+
+  // Header Section
+  .property-header {
+    margin-bottom: 32px;
+
+    .property-title-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+
+      @include md {
+        flex-direction: column;
+      }
+
+      .title-content {
+        flex: 1;
+
+        .verified-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 12px;
+          background: rgba($success, 0.1);
+          color: $success;
+          border-radius: $radius-full;
+          font-size: $font-size-sm;
+          font-weight: 600;
+          margin-bottom: 12px;
+
+          svg {
+            font-size: 18px;
+          }
+        }
+
+        h1 {
+          font-size: $font-size-3xl;
+          font-weight: 700;
+          color: $blue;
+          margin: 0 0 12px 0;
+          line-height: 1.2;
+
+          @include sm {
+            font-size: $font-size-2xl;
+          }
+        }
+
+        .property-location {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: $darkgrey;
+          margin-bottom: 16px;
+          font-size: $font-size-md;
+
+          svg {
+            font-size: 20px;
+            color: $pinkred;
+          }
+        }
+
+        .property-stats {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+          flex-wrap: wrap;
+
+          .rating {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+
+            svg {
+              color: $warning;
+              font-size: 20px;
+            }
+
+            .rating-value {
+              font-size: $font-size-lg;
+              font-weight: 700;
+              color: $blue;
+            }
+
+            .review-count {
+              color: $darkgrey;
+              font-size: $font-size-sm;
+            }
+          }
+
+          .property-type {
+            color: $darkgrey;
+            font-weight: 500;
+          }
+        }
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 12px;
+
+        @include md {
+          width: 100%;
+          justify-content: flex-start;
+        }
+
+        .action-btn {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 12px 20px;
+          border-radius: $radius-md;
+          font-size: $font-size-md;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          border: 2px solid $lightgrey;
+          background: white;
+          color: $blue;
+
+          svg {
+            font-size: 20px;
+          }
+
+          &:hover {
+            transform: translateY(-2px);
+            @include shadow-sm;
+          }
+
+          &.share-btn:hover {
+            border-color: $pinkred;
+            color: $pinkred;
+          }
+
+          &.wishlist-btn {
+            &:disabled {
+              opacity: 0.5;
+              cursor: not-allowed;
+            }
+
+            &.active {
+              border-color: $pinkred;
+              background: rgba($pinkred, 0.1);
+              color: $pinkred;
+
+              svg {
+                fill: $pinkred;
+              }
+            }
+
+            &:hover:not(:disabled) {
+              border-color: $pinkred;
+              color: $pinkred;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Photo Gallery
+  .photo-gallery {
+    position: relative;
+    margin-bottom: 48px;
+    border-radius: $radius-lg;
+    overflow: hidden;
+
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 8px;
+    height: 480px;
+
+    @include lg {
+      height: 400px;
+    }
+
+    @include md {
+      grid-template-columns: 1fr;
+      height: auto;
+    }
+
+    .main-photo {
+      grid-row: 1 / 3;
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
+
+      @include md {
+        height: 400px;
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
+
+      &:hover img {
+        transform: scale(1.05);
+      }
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+
+      @include md {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      @include sm {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .grid-photo {
+        cursor: pointer;
+        overflow: hidden;
+        position: relative;
+        height: 236px;
+
+        @include md {
+          height: 150px;
+        }
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.3s ease;
+        }
+
+        &:hover img {
+          transform: scale(1.05);
+        }
+
+        .more-photos-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.6);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: $font-size-xl;
+          font-weight: 700;
+        }
+      }
+    }
+
+    .view-all-photos {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      padding: 12px 24px;
+      background: white;
+      border: 2px solid $blue;
+      color: $blue;
+      border-radius: $radius-md;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      @include shadow-sm;
+
+      &:hover {
+        background: $blue;
+        color: white;
+        transform: translateY(-2px);
+        @include shadow;
+      }
+
+      @include sm {
+        bottom: 12px;
+        right: 12px;
+        padding: 10px 16px;
+        font-size: $font-size-sm;
+      }
+    }
+  }
+
+  // Main Content
+  .property-content {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 80px;
+    margin-bottom: 60px;
+
+    @include xl {
+      gap: 60px;
+    }
+
+    @include lg {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .content-main {
+      .section {
+        padding: 32px 0;
+        border-bottom: 1px solid $lightgrey;
+
+        &:first-child {
+          padding-top: 0;
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        h2 {
+          font-size: $font-size-2xl;
+          font-weight: 700;
+          color: $blue;
+          margin: 0 0 20px 0;
+        }
+
+        h3 {
+          font-size: $font-size-xl;
+          font-weight: 700;
+          color: $blue;
+          margin: 0 0 12px 0;
+        }
+
+        p {
+          color: $darkgrey;
+          line-height: 1.7;
+          margin: 0;
+        }
+
+        &.description {
+          font-size: $font-size-lg;
+        }
+      }
+
+      // Quick Info Card
+      .quick-info-card {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 20px;
+        padding: 24px;
+        background: $lightgrey;
+        border-radius: $radius-lg;
+        margin-bottom: 32px;
+
+        @include sm {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .info-item {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+
+          svg {
+            font-size: 28px;
+            color: $pinkred;
+          }
+
+          div {
+            display: flex;
+            flex-direction: column;
+
+            .label {
+              font-size: $font-size-sm;
+              color: $darkgrey;
+              font-weight: 500;
+            }
+
+            .value {
+              font-size: $font-size-xl;
+              font-weight: 700;
+              color: $blue;
+            }
+          }
+        }
+      }
+
+      // Host Section
+      .host-section {
+        padding: 32px 0;
+        border-bottom: 1px solid $lightgrey;
+
+        .host-info {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+
+          .host-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+          }
+
+          .host-details {
+            h3 {
+              font-size: $font-size-xl;
+              font-weight: 700;
+              color: $blue;
+              margin: 0 0 4px 0;
+            }
+
+            p {
+              color: $darkgrey;
+              margin: 0;
+            }
+          }
+        }
+      }
+
+      // Amenities Grid
+      .amenities-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 16px;
+
+        @include sm {
+          grid-template-columns: 1fr;
+        }
+
+        .amenity-item {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          padding: 16px;
+          background: white;
+          border: 1px solid $lightgrey;
+          border-radius: $radius-md;
+          transition: all 0.3s ease;
+
+          &:hover {
+            border-color: $pinkred;
+            @include shadow-sm;
+            transform: translateY(-2px);
+          }
+
+          .amenity-icon {
+            font-size: 28px;
+            color: $pinkred;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          span {
+            font-weight: 600;
+            color: $blue;
+          }
+        }
+      }
+    }
+
+    // Booking Sidebar
+    .booking-sidebar {
+      @include lg {
+        max-width: 500px;
+        margin: 0 auto;
+        width: 100%;
+      }
+
+      .booking-card {
+        position: sticky;
+        top: 100px;
+        padding: 32px;
+        background: white;
+        border: 1px solid $lightgrey;
+        border-radius: $radius-lg;
+        @include shadow-lg;
+
+        .price-section {
+          display: flex;
+          align-items: baseline;
+          gap: 8px;
+          margin-bottom: 24px;
+
+          .price {
+            font-size: $font-size-3xl;
+            font-weight: 700;
+            color: $blue;
+          }
+
+          .period {
+            font-size: $font-size-md;
+            color: $darkgrey;
+          }
+        }
+
+        .book-now-btn {
+          @include buttonStyle;
+          width: 100%;
+          padding: 16px;
+          font-size: $font-size-lg;
+          margin-bottom: 12px;
+        }
+
+        .booking-note {
+          text-align: center;
+          color: $darkgrey;
+          font-size: $font-size-sm;
+          margin: 0 0 24px 0;
+        }
+
+        .booking-features {
+          padding-top: 24px;
+          border-top: 1px solid $lightgrey;
+
+          .feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+
+            svg {
+              color: $success;
+              font-size: 20px;
+            }
+
+            span {
+              color: $darkgrey;
+              font-size: $font-size-sm;
+              font-weight: 500;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Reviews Container
+  .reviews-container {
+    margin-top: 60px;
+  }
+}
+
+// Lightbox
+.lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.95);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+
+  .lightbox-close,
+  .lightbox-prev,
+  .lightbox-next {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 50%;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      font-size: 32px;
+    }
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      transform: scale(1.1);
+    }
+  }
+
+  .lightbox-close {
+    top: 20px;
+    right: 20px;
+  }
+
+  .lightbox-prev {
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    &:hover {
+      transform: translateY(-50%) scale(1.1);
+    }
+  }
+
+  .lightbox-next {
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    &:hover {
+      transform: translateY(-50%) scale(1.1);
+    }
+  }
+
+  .lightbox-content {
+    max-width: 90vw;
+    max-height: 90vh;
+    position: relative;
+
+    img {
+      max-width: 100%;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: $radius-md;
+    }
+
+    .lightbox-counter {
+      position: absolute;
+      bottom: -50px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: white;
+      font-size: $font-size-lg;
+      font-weight: 600;
+      padding: 12px 24px;
+      background-color: rgba(0, 0, 0, 0.7);
+      border-radius: $radius-full;
+    }
+  }
+}
+
+// Share Modal
+.share-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  animation: fadeIn 0.3s ease;
+
+  .share-modal {
+    background: white;
+    border-radius: $radius-lg;
+    padding: 32px;
+    min-width: 320px;
+    max-width: 480px;
+    @include shadow-xl;
+    animation: modalSlideIn 0.3s ease;
+
+    .share-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+
+      h4 {
+        margin: 0;
+        color: $blue;
+        font-size: $font-size-xl;
+        font-weight: 700;
+      }
+
+      .close-btn {
+        background: none;
+        border: none;
+        font-size: 32px;
+        cursor: pointer;
+        color: $darkgrey;
+        transition: color 0.3s ease;
+        padding: 0;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          color: $blue;
+        }
+      }
+    }
+
+    .share-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 12px;
+
+      .share-option {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 20px 12px;
+        border: 1px solid $lightgrey;
+        border-radius: $radius-md;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 28px;
+
+        &:hover {
+          border-color: $pinkred;
+          background: rgba($pinkred, 0.05);
+          transform: translateY(-2px);
+          @include shadow-sm;
+        }
+
+        span {
+          font-size: $font-size-xs;
+          font-weight: 600;
+          color: $darkgrey;
+        }
+
+        svg {
+          color: $pinkred;
+          font-size: 24px;
+        }
+      }
+    }
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}

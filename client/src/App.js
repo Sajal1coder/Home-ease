@@ -16,7 +16,8 @@ const RegisterPage = lazy(() => import("./pages/RegisterPage"));
 const LoginPages = lazy(() => import("./pages/LoginPages"));
 const CreateListing = lazy(() => import("./pages/CreateListing"));
 const EditProperty = lazy(() => import("./pages/EditProperty"));
-const ListingDetails = lazy(() => import("./pages/ListingDetails"));
+const PropertyDetails = lazy(() => import("./pages/PropertyDetails"));
+const BookingPage = lazy(() => import("./pages/BookingPage"));
 // Deprecated pages removed: TripList, WishList, PropertyList, ReservationList
 const CategoryPage = lazy(() => import("./pages/CategoryPage"));
 const SearchPage = lazy(() => import("./pages/SearchPage"));
@@ -72,7 +73,8 @@ function App() {
               <Route path="/login" element={<LoginPages/>}/>
               <Route path="/create-listing" element={<CreateListing/>}/>
               <Route path="/edit-property/:listingId" element={<EditProperty/>}/>
-              <Route path="/properties/:listingId" element={<ListingDetails/>}/>
+              <Route path="/properties/:listingId" element={<PropertyDetails/>}/>
+              <Route path="/booking/:listingId" element={<BookingPage/>}/>
               <Route path="/properties/category/:category" element={<CategoryPage/>}/>
               <Route path="/properties/search/:search" element={<SearchPage/>}/>
               {/* Redirect legacy routes to unified /dashboard for backward compatibility */}

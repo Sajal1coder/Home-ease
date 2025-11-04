@@ -1,0 +1,594 @@
+@import "./variables.scss";
+@import "./breakpoints.scss";
+
+.booking-page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px 80px 80px;
+  min-height: calc(100vh - 200px);
+
+  @include xl {
+    padding: 32px 60px 80px;
+  }
+
+  @include lg {
+    padding: 32px 40px 80px;
+  }
+
+  @include sm {
+    padding: 24px 20px 60px;
+  }
+
+  .booking-header {
+    margin-bottom: 40px;
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: white;
+      border: 1px solid $lightgrey;
+      border-radius: $radius-md;
+      color: $blue;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 24px;
+
+      &:hover {
+        border-color: $pinkred;
+        color: $pinkred;
+        transform: translateX(-4px);
+      }
+
+      svg {
+        font-size: 20px;
+      }
+    }
+
+    h1 {
+      font-size: $font-size-3xl;
+      font-weight: 700;
+      color: $blue;
+      margin: 0;
+
+      @include sm {
+        font-size: $font-size-2xl;
+      }
+    }
+  }
+
+  .booking-container {
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 60px;
+
+    @include xl {
+      gap: 40px;
+    }
+
+    @include lg {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .booking-main {
+      .property-summary-card {
+        display: flex;
+        gap: 20px;
+        padding: 24px;
+        background: white;
+        border: 1px solid $lightgrey;
+        border-radius: $radius-lg;
+        margin-bottom: 32px;
+        @include shadow-sm;
+
+        @include sm {
+          flex-direction: column;
+        }
+
+        .property-image {
+          width: 120px;
+          height: 120px;
+          flex-shrink: 0;
+          border-radius: $radius-md;
+          overflow: hidden;
+
+          @include sm {
+            width: 100%;
+            height: 200px;
+          }
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+        }
+
+        .property-info {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+
+          .property-title-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 4px;
+
+            h3 {
+              font-size: $font-size-lg;
+              font-weight: 700;
+              color: $blue;
+              margin: 0;
+            }
+
+            .verified-badge-small {
+              display: inline-flex;
+              align-items: center;
+              gap: 4px;
+              padding: 4px 8px;
+              background: rgba($success, 0.1);
+              color: $success;
+              border-radius: $radius-full;
+              font-size: $font-size-xs;
+              font-weight: 600;
+
+              svg {
+                font-size: 14px;
+              }
+            }
+          }
+
+          .property-location-small {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: $darkgrey;
+            font-size: $font-size-sm;
+
+            svg {
+              font-size: 16px;
+              color: $pinkred;
+            }
+          }
+
+          .property-rating-small {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: $font-size-sm;
+
+            svg {
+              color: $warning;
+              font-size: 16px;
+            }
+
+            .reviews {
+              color: $darkgrey;
+            }
+          }
+
+          .property-specs {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            color: $darkgrey;
+            font-size: $font-size-sm;
+
+            svg {
+              font-size: 16px;
+            }
+          }
+        }
+      }
+
+      .booking-section {
+        background: white;
+        border: 1px solid $lightgrey;
+        border-radius: $radius-lg;
+        padding: 32px;
+        margin-bottom: 24px;
+        @include shadow-sm;
+
+        h2 {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          font-size: $font-size-xl;
+          font-weight: 700;
+          color: $blue;
+          margin: 0 0 24px 0;
+
+          svg {
+            color: $pinkred;
+            font-size: 24px;
+          }
+        }
+
+        .date-selection {
+          .rdrCalendarWrapper {
+            width: 100%;
+            color: $blue;
+          }
+
+          .rdrDateRangePickerWrapper {
+            width: 100%;
+          }
+
+          .rdrDefinedRangesWrapper {
+            display: none;
+          }
+
+          .rdrMonths {
+            @include sm {
+              flex-direction: column;
+            }
+          }
+
+          .selected-dates {
+            display: flex;
+            gap: 24px;
+            margin-top: 24px;
+            padding: 20px;
+            background: $lightgrey;
+            border-radius: $radius-md;
+
+            @include sm {
+              flex-direction: column;
+              gap: 16px;
+            }
+
+            .date-info {
+              flex: 1;
+              display: flex;
+              flex-direction: column;
+              gap: 8px;
+
+              .label {
+                font-size: $font-size-sm;
+                color: $darkgrey;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+              }
+
+              .date {
+                font-size: $font-size-lg;
+                font-weight: 700;
+                color: $blue;
+              }
+            }
+
+            .date-divider {
+              display: flex;
+              align-items: center;
+              font-size: $font-size-2xl;
+              color: $pinkred;
+              font-weight: 700;
+
+              @include sm {
+                transform: rotate(90deg);
+                height: 24px;
+              }
+            }
+          }
+
+          .error-message {
+            margin-top: 16px;
+            padding: 12px 16px;
+            background: rgba($error, 0.1);
+            color: $error;
+            border-radius: $radius-md;
+            font-weight: 600;
+            font-size: $font-size-sm;
+          }
+        }
+
+        &.payment-section {
+          .payment-features {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 32px;
+            padding: 24px;
+            background: $lightgrey;
+            border-radius: $radius-md;
+
+            .feature {
+              display: flex;
+              gap: 16px;
+
+              svg {
+                color: $success;
+                font-size: 24px;
+                flex-shrink: 0;
+              }
+
+              div {
+                h4 {
+                  font-size: $font-size-md;
+                  font-weight: 700;
+                  color: $blue;
+                  margin: 0 0 4px 0;
+                }
+
+                p {
+                  font-size: $font-size-sm;
+                  color: $darkgrey;
+                  margin: 0;
+                  line-height: 1.5;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .booking-sidebar {
+      @include lg {
+        max-width: 500px;
+        margin: 0 auto;
+        width: 100%;
+      }
+
+      .price-summary-card {
+        position: sticky;
+        top: 100px;
+        background: white;
+        border: 1px solid $lightgrey;
+        border-radius: $radius-lg;
+        padding: 32px;
+        margin-bottom: 24px;
+        @include shadow-lg;
+
+        @include lg {
+          position: static;
+        }
+
+        h3 {
+          font-size: $font-size-xl;
+          font-weight: 700;
+          color: $blue;
+          margin: 0 0 24px 0;
+          padding-bottom: 16px;
+          border-bottom: 1px solid $lightgrey;
+        }
+
+        .price-breakdown {
+          margin-bottom: 20px;
+
+          .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            color: $darkgrey;
+            font-size: $font-size-md;
+
+            &.subtotal {
+              padding-top: 16px;
+              margin-top: 8px;
+              border-top: 1px solid $lightgrey;
+              font-weight: 600;
+              color: $blue;
+            }
+          }
+        }
+
+        .price-total {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 20px;
+          background: $lightgrey;
+          border-radius: $radius-md;
+          margin-bottom: 24px;
+
+          span {
+            font-size: $font-size-lg;
+            font-weight: 700;
+            color: $blue;
+          }
+
+          .total-amount {
+            font-size: $font-size-2xl;
+            color: $pinkred;
+          }
+        }
+
+        .booking-terms {
+          padding-top: 20px;
+          border-top: 1px solid $lightgrey;
+
+          .terms-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+            user-select: none;
+
+            input[type="checkbox"] {
+              width: 20px;
+              height: 20px;
+              margin-top: 2px;
+              cursor: pointer;
+              flex-shrink: 0;
+              accent-color: $pinkred;
+            }
+
+            span {
+              font-size: $font-size-xs;
+              color: $darkgrey;
+              line-height: 1.6;
+              flex: 1;
+            }
+
+            &:hover span {
+              color: $blue;
+            }
+          }
+        }
+      }
+
+      .host-card {
+        background: white;
+        border: 1px solid $lightgrey;
+        border-radius: $radius-lg;
+        padding: 24px;
+        @include shadow-sm;
+
+        h4 {
+          font-size: $font-size-md;
+          font-weight: 700;
+          color: $blue;
+          margin: 0 0 16px 0;
+        }
+
+        .host-info {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+
+          .host-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            object-fit: cover;
+          }
+
+          div {
+            h5 {
+              font-size: $font-size-md;
+              font-weight: 700;
+              color: $blue;
+              margin: 0 0 4px 0;
+            }
+
+            p {
+              font-size: $font-size-sm;
+              color: $darkgrey;
+              margin: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Date Range Calendar Customization
+.rdrDateDisplayWrapper {
+  background-color: $lightgrey !important;
+}
+
+.rdrDateDisplay {
+  margin: 0 !important;
+}
+
+.rdrDateInput {
+  border-color: $lightgrey !important;
+
+  input {
+    color: $blue !important;
+    font-weight: 600 !important;
+  }
+}
+
+.rdrDayToday .rdrDayNumber span:after {
+  background: $pinkred !important;
+}
+
+.rdrDay {
+  &:not(.rdrDayPassive) .rdrInRange,
+  &:not(.rdrDayPassive) .rdrStartEdge,
+  &:not(.rdrDayPassive) .rdrEndEdge,
+  &:not(.rdrDayPassive) .rdrSelected {
+    background-color: rgba($pinkred, 0.1) !important;
+  }
+
+  &:not(.rdrDayPassive) .rdrStartEdge,
+  &:not(.rdrDayPassive) .rdrEndEdge {
+    background-color: $pinkred !important;
+  }
+}
+
+.rdrDayNumber span {
+  color: $blue !important;
+  font-weight: 500 !important;
+}
+
+.rdrDayPassive .rdrDayNumber span {
+  color: $grey !important;
+}
+
+.rdrMonthName {
+  color: $blue !important;
+  font-weight: 700 !important;
+}
+
+.rdrWeekDay {
+  color: $darkgrey !important;
+  font-weight: 600 !important;
+}
+
+// Processing Overlay
+.processing-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99998;
+  backdrop-filter: blur(4px);
+
+  .processing-content {
+    background: white;
+    border-radius: $radius-lg;
+    padding: 48px 60px;
+    text-align: center;
+    @include shadow-xl;
+
+    @include sm {
+      padding: 36px 40px;
+    }
+
+    .processing-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid $lightgrey;
+      border-top-color: $pinkred;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 24px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    h3 {
+      color: $blue;
+      font-size: $font-size-xl;
+      font-weight: 700;
+      margin: 0 0 12px 0;
+    }
+
+    p {
+      color: $darkgrey;
+      font-size: $font-size-sm;
+      margin: 0;
+    }
+  }
+}

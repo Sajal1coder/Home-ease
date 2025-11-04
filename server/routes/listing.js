@@ -212,14 +212,35 @@ router.get("/search/:search", async (req, res) => {
   const { search } = req.params;
 
   try {
-    let listings = await Listing.find({
-      $or: [
-        { category: { $regex: search, $options: "i" } },
-        { city: { $regex: search, $options: "i" } },
-        { country: { $regex: search, $options: "i" } },
-        { type: { $regex: search, $options: "i" } },
-      ],
-    }).populate("creator");
+    // Use MongoDB text search with relevance scoring for better performance
+    // This is much more efficient than regex and provides better results
+    let listings = await Listing.find(
+      {
+        $text: { $search: search },
+        active: true,
+        status: 'active'
+      },
+      {
+        score: { $meta: "textScore" }
+      }
+    )
+    .sort({ score: { $meta: "textScore" } }) // Sort by relevance
+    .populate("creator");
+
+    // Fallback: If no results with text search, try regex (for partial matches)
+    if (listings.length === 0) {
+      listings = await Listing.find({
+        $or: [
+          { category: { $regex: search, $options: "i" } },
+          { city: { $regex: search, $options: "i" } },
+          { country: { $regex: search, $options: "i" } },
+          { type: { $regex: search, $options: "i" } },
+          { title: { $regex: search, $options: "i" } },
+        ],
+        active: true,
+        status: 'active'
+      }).populate("creator");
+    }
 
     // Add review statistics to each listing
     const listingsWithStats = await addReviewStats(listings);

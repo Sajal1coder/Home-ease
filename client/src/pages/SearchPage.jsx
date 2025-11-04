@@ -34,6 +34,10 @@ const SearchPage = () => {
 
   const getSearchListings = async () => {
     try {
+      setLoading(true); // Reset loading state
+      dispatch(setListings({ listings: [] })); // Clear old listings
+      setSortedListings([]); // Clear sorted listings
+      
       const response = await fetch(`${API_BASE_URL}/properties/search/${search}`, {
         method: "GET"
       })
@@ -43,6 +47,7 @@ const SearchPage = () => {
       setLoading(false)
     } catch (err) {
       console.log("Fetch Search List failed!", err.message)
+      setLoading(false)
     }
   }
 
@@ -116,8 +121,11 @@ const SearchPage = () => {
     return [Math.min(...prices), Math.max(...prices)];
   };
 
+  // Fetch new listings whenever search term changes
   useEffect(() => {
-    getSearchListings()
+    if (search) {
+      getSearchListings()
+    }
   }, [search])
 
   // Update sorted listings when listings, sortBy, or priceRange changes
@@ -131,8 +139,11 @@ const SearchPage = () => {
       
       const sorted = filterAndSortListings(listings, sortBy, priceRange);
       setSortedListings(sorted);
+    } else if (listings && listings.length === 0 && !loading) {
+      // Handle empty results case
+      setSortedListings([]);
     }
-  }, [listings, sortBy, priceRange])
+  }, [listings, sortBy, priceRange, loading])
   
   return loading ? <Loader /> : (
     <>

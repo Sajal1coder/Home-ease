@@ -1,0 +1,254 @@
+@import "./variables.scss";
+@import "./breakpoints.scss";
+
+.enhanced-checkout-form {
+  width: 100%;
+
+  .security-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: rgba($success, 0.1);
+    border: 1px solid rgba($success, 0.3);
+    border-radius: $radius-md;
+    margin-bottom: 24px;
+    color: $success;
+    font-size: $font-size-sm;
+    font-weight: 600;
+
+    svg {
+      font-size: 18px;
+    }
+  }
+
+  .payment-section {
+    margin-bottom: 24px;
+
+    .payment-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      color: $blue;
+      font-weight: 600;
+      font-size: $font-size-md;
+
+      svg {
+        color: $pinkred;
+        font-size: 20px;
+      }
+    }
+
+    .card-element-wrapper {
+      padding: 16px;
+      border: 2px solid $lightgrey;
+      border-radius: $radius-md;
+      background: white;
+      transition: all 0.3s ease;
+
+      &:focus-within {
+        border-color: $pinkred;
+        @include shadow-sm;
+      }
+
+      &.error {
+        border-color: $error;
+        background: rgba($error, 0.05);
+      }
+
+      &.complete {
+        border-color: $success;
+        background: rgba($success, 0.02);
+      }
+    }
+  }
+
+  .recaptcha-section {
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: center;
+
+    @include sm {
+      transform: scale(0.85);
+      transform-origin: center;
+    }
+  }
+
+  .error-message {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: rgba($error, 0.1);
+    border: 1px solid rgba($error, 0.3);
+    border-radius: $radius-md;
+    color: $error;
+    font-size: $font-size-sm;
+    font-weight: 600;
+    margin-bottom: 20px;
+
+    svg {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+  }
+
+  .payment-summary {
+    padding: 20px;
+    background: $lightgrey;
+    border-radius: $radius-md;
+    margin-bottom: 24px;
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid $grey;
+
+      span {
+        font-weight: 600;
+        color: $darkgrey;
+      }
+
+      .amount {
+        font-size: $font-size-xl;
+        color: $blue;
+        font-weight: 700;
+      }
+    }
+
+    .summary-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: $darkgrey;
+      font-size: $font-size-xs;
+
+      svg {
+        font-size: 16px;
+        color: $success;
+      }
+    }
+  }
+
+  .pay-button {
+    width: 100%;
+    padding: 18px;
+    background: $pinkred;
+    color: white;
+    border: none;
+    border-radius: $radius-md;
+    font-size: $font-size-lg;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+
+    &:hover:not(:disabled) {
+      background: darken($pinkred, 10%);
+      @include shadow-lg;
+      transform: translateY(-2px);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      background: $grey;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .button-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+
+      .spinner {
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(white, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    }
+
+    .button-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+
+      svg {
+        font-size: 22px;
+      }
+
+      .check-icon {
+        color: $success;
+        animation: checkPop 0.4s ease;
+      }
+
+      @keyframes checkPop {
+        0%, 100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.2);
+        }
+      }
+    }
+  }
+
+  .trust-indicators {
+    display: flex;
+    justify-content: space-around;
+    gap: 16px;
+    padding: 16px;
+    background: white;
+    border: 1px solid $lightgrey;
+    border-radius: $radius-md;
+
+    @include sm {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: $darkgrey;
+      font-size: $font-size-xs;
+      font-weight: 500;
+
+      svg {
+        color: $success;
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+// ReCAPTCHA custom styling
+.rc-anchor-light {
+  border-radius: $radius-md !important;
+  border-color: $lightgrey !important;
+}
+
+.rc-anchor-normal {
+  @include shadow-sm;
+}

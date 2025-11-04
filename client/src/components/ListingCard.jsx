@@ -148,12 +148,27 @@ const ListingCard = ({
     }
   };
 
+  // Handle card click with support for new tab
+  const handleCardClick = (e) => {
+    // If Ctrl/Cmd key is pressed or middle mouse button, open in new tab
+    if (e.ctrlKey || e.metaKey || e.button === 1) {
+      window.open(`/properties/${listingId}`, '_blank');
+    } else {
+      navigate(`/properties/${listingId}`);
+    }
+  };
+
   return (
     <div
       className="listing-card"
-      onClick={() => {
-        navigate(`/properties/${listingId}`);
+      onClick={handleCardClick}
+      onAuxClick={(e) => {
+        if (e.button === 1) { // Middle mouse button
+          e.preventDefault();
+          window.open(`/properties/${listingId}`, '_blank');
+        }
       }}
+      style={{ cursor: 'pointer' }}
     >
       {/* Badges */}
       <div className="listing-badges">

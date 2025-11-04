@@ -1,0 +1,206 @@
+@import "./variables.scss";
+@import "./breakpoints.scss";
+
+.payment-success-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  backdrop-filter: blur(4px);
+
+  .payment-success-modal {
+    background: white;
+    border-radius: $radius-lg;
+    padding: 48px 40px;
+    max-width: 540px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    @include shadow-xl;
+
+    @include sm {
+      padding: 36px 24px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: transparent;
+      border: none;
+      color: $darkgrey;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      svg {
+        font-size: 24px;
+      }
+
+      &:hover {
+        background: $lightgrey;
+        color: $blue;
+      }
+    }
+
+    .success-icon-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 24px;
+
+      .success-icon {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(135deg, $success, lighten($success, 10%));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 40px rgba($success, 0.3);
+
+        svg {
+          font-size: 64px;
+          color: white;
+        }
+      }
+    }
+
+    h2 {
+      text-align: center;
+      color: $blue;
+      font-size: $font-size-3xl;
+      font-weight: 700;
+      margin: 0 0 12px 0;
+
+      @include sm {
+        font-size: $font-size-2xl;
+      }
+    }
+
+    .success-message {
+      text-align: center;
+      color: $darkgrey;
+      font-size: $font-size-lg;
+      margin: 0 0 32px 0;
+    }
+
+    .booking-details-card {
+      background: $lightgrey;
+      border-radius: $radius-md;
+      padding: 24px;
+      margin-bottom: 32px;
+
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+
+        &:not(:last-child) {
+          border-bottom: 1px solid rgba($grey, 0.3);
+        }
+
+        &.total {
+          margin-top: 8px;
+          padding-top: 16px;
+          border-top: 2px solid $pinkred;
+
+          .label,
+          .value {
+            font-weight: 700;
+            color: $blue;
+          }
+
+          .value {
+            font-size: $font-size-xl;
+            color: $pinkred;
+          }
+        }
+
+        .label {
+          color: $darkgrey;
+          font-size: $font-size-sm;
+          font-weight: 600;
+        }
+
+        .value {
+          color: $blue;
+          font-weight: 600;
+          text-align: right;
+        }
+      }
+    }
+
+    .redirect-message {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding: 20px;
+      background: rgba($pinkred, 0.05);
+      border-radius: $radius-md;
+
+      .countdown-circle {
+        position: relative;
+        width: 50px;
+        height: 50px;
+
+        svg {
+          transform: rotate(-90deg);
+        }
+
+        .countdown-number {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          font-size: $font-size-xl;
+          font-weight: 700;
+          color: $pinkred;
+        }
+      }
+
+      p {
+        margin: 0;
+        color: $darkgrey;
+        font-size: $font-size-sm;
+        text-align: center;
+      }
+    }
+
+    .view-bookings-btn {
+      width: 100%;
+      padding: 16px;
+      background: $pinkred;
+      color: white;
+      border: none;
+      border-radius: $radius-md;
+      font-size: $font-size-lg;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: darken($pinkred, 10%);
+        @include shadow-lg;
+      }
+    }
+  }
+}
+
+// Confetti canvas will be on top
+canvas {
+  pointer-events: none;
+}
