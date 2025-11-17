@@ -38,7 +38,7 @@ services:
       - key: N8N_BLOCK_ENV_ACCESS_IN_NODE
         value: false
       - key: GEMINI_API_KEY
-        sync: false
+        fromSecret: GEMINI_API_KEY
       - key: WEBHOOK_URL
         value: https://homeease-n8n.onrender.com/
       - key: N8N_HOST
@@ -65,10 +65,10 @@ services:
       - key: N8N_WEBHOOK_URL
         value: https://homeease-n8n.onrender.com/webhook/chat
       - key: GEMINI_API_KEY
-        sync: false
+        fromSecret: GEMINI_API_KEY
       - key: QDRANT_URL
         value: https://homeease-qdrant.onrender.com:6333
       - key: CORS_ORIGIN
-        sync: false
+        fromSecret: CORS_ORIGIN
     healthCheckPath: /api/health
     autoDeploy: true
