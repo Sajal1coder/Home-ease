@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: homeease-n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - GENERIC_TIMEZONE=Asia/Kolkata
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+      - N8N_USER_MANAGEMENT_JWT_SECRET=${N8N_JWT_SECRET}
+      # Allow environment variable access in workflows
+      - N8N_BLOCK_ENV_ACCESS_IN_NODE=false
+      # Gemini API key for workflow
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./workflows:/workflows
+      - ./data:/data
+    networks:
+      - homeease-network
+    depends_on:
+      - qdrant
+
+  # PostgreSQL removed - no chat history storage needed
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: homeease-qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - homeease-network
+    environment:
+      - QDRANT__SERVICE__GRPC_PORT=6334
+
+  chatbot-api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: homeease-chatbot-api
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - N8N_WEBHOOK_URL=${N8N_WEBHOOK_URL}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - QDRANT_URL=http://qdrant:6333
+    volumes:
+      - ./api:/app
+      - /app/node_modules
+    networks:
+      - homeease-network
+    depends_on:
+      - n8n
+      - qdrant
+
+volumes:
+  n8n_data:
+  qdrant_data:
+
+networks:
+  homeease-network:
+    driver: bridge

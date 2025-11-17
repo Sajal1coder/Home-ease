@@ -1,0 +1,32 @@
+# Files to ignore during Render deployment
+
+# Development files
+.env
+.env.local
+docker-compose.yml
+Dockerfile
+api/Dockerfile
+
+# Data files (should be in vector DB already)
+data/
+data-ingestion/
+
+# Workflows (should be imported to n8n)
+workflows/
+
+# Documentation
+README.md
+SIMPLIFIED-SETUP.md
+
+# Node modules (will be installed during build)
+node_modules/
+api/node_modules/
+data-ingestion/node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db

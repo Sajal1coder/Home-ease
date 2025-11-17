@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 import Loader from "./components/Loader";
 import ScrollToTop from "./components/ScrollToTop";
+import Chatbot from "./components/Chatbot";
 import AdminDashboard from './pages/AdminDashboard';
 import UserDashboard from './pages/UserDashboard';
 import MessagingPage from './pages/MessagingPage';
@@ -101,6 +102,7 @@ function App() {
           theme="light"
         />
         <ScrollToTop />
+        <Chatbot />
       </div>
     </ErrorBoundary>
   );

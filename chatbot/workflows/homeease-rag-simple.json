@@ -1,0 +1,205 @@
+{
+  "name": "HomeEase RAG Chatbot (HTTP)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "chat",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const message = $input.item.json.body.message;\nconst userId = $input.item.json.body.userId || 'anonymous';\n\nreturn {\n  json: {\n    message,\n    userId,\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "extract",
+      "name": "Extract Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "url": "=https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key={{ $env.GEMINI_API_KEY }}",
+        "authentication": "none",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"content\": { \"parts\": [{ \"text\": $json.message }] } } }}",
+        "options": {}
+      },
+      "id": "gemini-embed",
+      "name": "Gemini Embedding",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [640, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const embedding = $input.item.json.embedding.values;\nconst message = $('Extract Message').item.json.message;\n\nreturn {\n  json: {\n    embedding,\n    message\n  }\n};"
+      },
+      "id": "format-embedding",
+      "name": "Format Embedding",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [840, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://qdrant:6333/collections/homeease_knowledge/points/search",
+        "authentication": "none",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"vector\": {{JSON.stringify($json.embedding)}},\n  \"limit\": 5,\n  \"score_threshold\": 0.7,\n  \"with_payload\": true\n}",
+        "options": {}
+      },
+      "id": "qdrant-search",
+      "name": "Search Qdrant",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1040, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const results = $input.item.json.result || [];\nconst message = $('Format Embedding').item.json.message;\n\n// Build context from search results\nconst contexts = results.map(item => {\n  const payload = item.payload;\n  if (payload.type === 'faq') {\n    return `Q: ${payload.question}\\nA: ${payload.answer}`;\n  } else {\n    return `Page: ${payload.title} (${payload.route})\\nDescription: ${payload.description}`;\n  }\n});\n\nconst context = contexts.join('\\n\\n---\\n\\n');\n\nconst systemPrompt = `You are HomeEase Assistant, a helpful chatbot for the HomeEase platform.\n\nYou help users with:\n- Booking services and property rentals\n- Account management and navigation\n- Payment and cancellation policies\n- General platform questions\n\nGuidelines:\n- Be friendly, concise, and professional\n- Use the context below to answer accurately\n- If a question is about navigation, mention the page route\n- Keep responses under 150 words\n- If unsure, suggest contacting support\n\n--- CONTEXT FROM KNOWLEDGE BASE ---\n${context}\n--- END CONTEXT ---`;\n\nconst userPrompt = `User question: ${message}\\n\\nProvide a helpful answer based on the context above.`;\n\nreturn {\n  json: {\n    systemPrompt,\n    userPrompt,\n    message\n  }\n};"
+      },
+      "id": "build-prompt",
+      "name": "Build Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1240, 300]
+    },
+    {
+      "parameters": {
+        "url": "=https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={{ $env.GEMINI_API_KEY }}",
+        "authentication": "none",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"contents\": [{ \"parts\": [{ \"text\": $json.systemPrompt + \"\\n\\n\" + $json.userPrompt }] }], \"generationConfig\": { \"temperature\": 0.7, \"maxOutputTokens\": 1024 } } }}",
+        "options": {}
+      },
+      "id": "gemini-chat",
+      "name": "Gemini Chat",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1440, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const geminiResponse = $input.item.json.candidates[0].content.parts[0].text;\n\nreturn {\n  json: {\n    success: true,\n    response: geminiResponse,\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "format-response",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1640, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{$json}}"
+      },
+      "id": "respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1840, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Message": {
+      "main": [
+        [
+          {
+            "node": "Gemini Embedding",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Embedding": {
+      "main": [
+        [
+          {
+            "node": "Format Embedding",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Embedding": {
+      "main": [
+        [
+          {
+            "node": "Search Qdrant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Qdrant": {
+      "main": [
+        [
+          {
+            "node": "Build Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Prompt": {
+      "main": [
+        [
+          {
+            "node": "Gemini Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Chat": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Response": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {}
+}

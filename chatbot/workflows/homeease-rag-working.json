@@ -1,0 +1,153 @@
+{
+  "name": "HomeEase RAG Chatbot (Working)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "chat",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const message = $input.item.json.body.message;\nconst userId = $input.item.json.body.userId || 'anonymous';\n\nreturn {\n  json: {\n    message,\n    userId,\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "extract",
+      "name": "Extract Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const message = $input.item.json.message;\nconst apiKey = process.env.GEMINI_API_KEY;\n\nconst response = await fetch(\n  `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${apiKey}`,\n  {\n    method: 'POST',\n    headers: {\n      'Content-Type': 'application/json'\n    },\n    body: JSON.stringify({\n      content: {\n        parts: [\n          {\n            text: message\n          }\n        ]\n      }\n    })\n  }\n);\n\nconst data = await response.json();\n\nreturn {\n  json: {\n    embedding: data.embedding.values,\n    message: message\n  }\n};"
+      },
+      "id": "gemini-embed",
+      "name": "Generate Embedding",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [640, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://qdrant:6333/collections/homeease_knowledge/points/search",
+        "authentication": "none",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  \"vector\": $json.embedding,\n  \"limit\": 5,\n  \"score_threshold\": 0.7,\n  \"with_payload\": true\n} }}",
+        "options": {}
+      },
+      "id": "qdrant-search",
+      "name": "Search Qdrant",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [840, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const results = $input.item.json.result || [];\nconst message = $('Generate Embedding').item.json.message;\n\n// Build context from search results\nconst contexts = results.map(item => {\n  const payload = item.payload;\n  if (payload.type === 'faq') {\n    return `Q: ${payload.question}\\nA: ${payload.answer}`;\n  } else {\n    return `Page: ${payload.title} (${payload.route})\\nDescription: ${payload.description}`;\n  }\n});\n\nconst context = contexts.join('\\n\\n---\\n\\n');\n\nconst systemPrompt = `You are HomeEase Assistant, a helpful chatbot for the HomeEase platform.\n\nYou help users with:\n- Booking services and property rentals\n- Account management and navigation\n- Payment and cancellation policies\n- General platform questions\n\nGuidelines:\n- Be friendly, concise, and professional\n- Use the context below to answer accurately\n- If a question is about navigation, mention the page route\n- Keep responses under 150 words\n- If unsure, suggest contacting support\n\n--- CONTEXT FROM KNOWLEDGE BASE ---\n${context}\n--- END CONTEXT ---`;\n\nconst userPrompt = `User question: ${message}\\n\\nProvide a helpful answer based on the context above.`;\n\nreturn {\n  json: {\n    systemPrompt,\n    userPrompt,\n    message\n  }\n};"
+      },
+      "id": "build-prompt",
+      "name": "Build Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1040, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const systemPrompt = $input.item.json.systemPrompt;\nconst userPrompt = $input.item.json.userPrompt;\nconst apiKey = process.env.GEMINI_API_KEY;\n\nconst response = await fetch(\n  `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,\n  {\n    method: 'POST',\n    headers: {\n      'Content-Type': 'application/json'\n    },\n    body: JSON.stringify({\n      contents: [\n        {\n          parts: [\n            {\n              text: systemPrompt + '\\n\\n' + userPrompt\n            }\n          ]\n        }\n      ],\n      generationConfig: {\n        temperature: 0.7,\n        maxOutputTokens: 1024\n      }\n    })\n  }\n);\n\nconst data = await response.json();\nconst geminiResponse = data.candidates[0].content.parts[0].text;\n\nreturn {\n  json: {\n    success: true,\n    response: geminiResponse,\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "gemini-chat",
+      "name": "Generate Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1240, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{$json}}"
+      },
+      "id": "respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1440, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Message": {
+      "main": [
+        [
+          {
+            "node": "Generate Embedding",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Embedding": {
+      "main": [
+        [
+          {
+            "node": "Search Qdrant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Qdrant": {
+      "main": [
+        [
+          {
+            "node": "Build Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Prompt": {
+      "main": [
+        [
+          {
+            "node": "Generate Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Response": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {}
+}

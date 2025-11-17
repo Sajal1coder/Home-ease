@@ -1,0 +1,13 @@
+id,route,title,description,category,keywords
+1,/,Home,Main landing page showcasing featured properties and services,navigation,"home, landing, featured properties, main page"
+2,/register,Register,User registration page to create a new account,authentication,"signup, register, create account, new user"
+3,/login,Login,User login page to access your account,authentication,"login, signin, access account, authentication"
+4,/create-listing,Create Listing,Create a new property listing or service offering,property-management,"create, new listing, add property, post service"
+5,/edit-property/:listingId,Edit Property,Edit an existing property listing,property-management,"edit, update, modify property, change listing"
+6,/properties/:listingId,Property Details,View detailed information about a specific property or service,properties,"property details, view listing, service info, details page"
+7,/booking/:listingId,Book Service,Book a property or service,booking,"booking, reserve, schedule, appointment, book service"
+8,/properties/category/:category,Category,Browse properties and services by category,properties,"category, browse, filter, property types, services"
+9,/properties/search/:search,Search,Search for properties and services,properties,"search, find, lookup, query properties"
+10,/dashboard,Dashboard,User dashboard to manage trips bookings wishlist and properties,user-area,"dashboard, my account, user panel, manage bookings, my trips, wishlist, my properties"
+11,/admin,Admin Dashboard,Admin panel for managing the platform,admin,"admin, control panel, platform management, administration"
+12,/messages,Messages,Messaging and communication center,communication,"messages, chat, inbox, communication, contact"

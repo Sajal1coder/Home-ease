@@ -1,0 +1,74 @@
+services:
+  # Qdrant Vector Database
+  - type: pserv
+    name: homeease-qdrant
+    env: docker
+    region: singapore
+    plan: starter
+    image:
+      url: docker.io/saja1l/qdrant:latest
+    envVars:
+      - key: QDRANT__SERVICE__GRPC_PORT
+        value: 6334
+    disk:
+      name: qdrant-data
+      mountPath: /qdrant/storage
+      sizeGB: 1
+    autoDeploy: true
+
+  # n8n Workflow Automation
+  - type: web
+    name: homeease-n8n
+    env: docker
+    region: singapore
+    plan: starter
+    image:
+      url: docker.io/saja1l/n8nio:latest
+    envVars:
+      - key: N8N_PORT
+        value: 5678
+      - key: N8N_PROTOCOL
+        value: https
+      - key: GENERIC_TIMEZONE
+        value: Asia/Kolkata
+      - key: N8N_ENCRYPTION_KEY
+        generateValue: true
+      - key: N8N_USER_MANAGEMENT_JWT_SECRET
+        generateValue: true
+      - key: N8N_BLOCK_ENV_ACCESS_IN_NODE
+        value: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: WEBHOOK_URL
+        value: https://homeease-n8n.onrender.com/
+      - key: N8N_HOST
+        value: homeease-n8n.onrender.com
+    disk:
+      name: n8n-data
+      mountPath: /home/node/.n8n
+      sizeGB: 1
+    autoDeploy: true
+
+  # Chatbot API Service
+  - type: web
+    name: homeease-chatbot-api
+    env: docker
+    region: singapore
+    plan: free
+    image:
+      url: docker.io/saja1l/chatbot-chatbot-api:latest
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: N8N_WEBHOOK_URL
+        value: https://homeease-n8n.onrender.com/webhook/chat
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: QDRANT_URL
+        value: https://homeease-qdrant.onrender.com:6333
+      - key: CORS_ORIGIN
+        sync: false
+    healthCheckPath: /api/health
+    autoDeploy: true
