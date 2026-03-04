@@ -12,7 +12,10 @@
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [240, 300]
+      "position": [
+        240,
+        300
+      ]
     },
     {
       "parameters": {
@@ -22,12 +25,15 @@
       "name": "Extract Message",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [440, 300]
+      "position": [
+        440,
+        300
+      ]
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ \"https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=\" + $env.GEMINI_API_KEY }}",
+        "url": "={{ \"https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=\" + $env.GEMINI_API_KEY }}",
         "authentication": "none",
         "sendBody": true,
         "contentType": "raw",
@@ -39,7 +45,10 @@
       "name": "Gemini Embedding",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [640, 300]
+      "position": [
+        640,
+        300
+      ]
     },
     {
       "parameters": {
@@ -49,7 +58,10 @@
       "name": "Format Embedding",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [840, 300]
+      "position": [
+        840,
+        300
+      ]
     },
     {
       "parameters": {
@@ -66,7 +78,10 @@
       "name": "Search Qdrant",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1040, 300]
+      "position": [
+        1040,
+        300
+      ]
     },
     {
       "parameters": {
@@ -76,7 +91,10 @@
       "name": "Build Prompt",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1240, 300]
+      "position": [
+        1240,
+        300
+      ]
     },
     {
       "parameters": {
@@ -93,7 +111,10 @@
       "name": "Gemini Chat",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1440, 300]
+      "position": [
+        1440,
+        300
+      ]
     },
     {
       "parameters": {
@@ -103,7 +124,10 @@
       "name": "Format Response",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1640, 300]
+      "position": [
+        1640,
+        300
+      ]
     },
     {
       "parameters": {
@@ -114,7 +138,10 @@
       "name": "Respond",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [1840, 300]
+      "position": [
+        1840,
+        300
+      ]
     }
   ],
   "connections": {

@@ -10,7 +10,7 @@ const Chatbot = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
-  const CHATBOT_API_URL = 'http://localhost:3001';
+  const CHATBOT_API_URL = 'https://home-ease-9s5q.onrender.com';
 
   // Initial greeting
   useEffect(() => {
@@ -30,7 +30,7 @@ const Chatbot = () => {
 
   const sendMessage = async (e) => {
     e.preventDefault();
-    
+
     if (!inputMessage.trim() || isLoading) return;
 
     const userMessage = {
@@ -92,7 +92,7 @@ const Chatbot = () => {
 
   if (!isOpen) {
     return (
-      <button 
+      <button
         className="chatbot-toggle-btn"
         onClick={() => setIsOpen(true)}
         aria-label="Open chat"
@@ -111,14 +111,14 @@ const Chatbot = () => {
           <span className="status-indicator"></span>
         </div>
         <div className="chatbot-header-actions">
-          <button 
+          <button
             onClick={() => setIsMinimized(!isMinimized)}
             aria-label="Minimize chat"
             className="icon-btn"
           >
             <Minimize2 size={18} />
           </button>
-          <button 
+          <button
             onClick={() => setIsOpen(false)}
             aria-label="Close chat"
             className="icon-btn"
@@ -132,17 +132,17 @@ const Chatbot = () => {
         <>
           <div className="chatbot-messages">
             {messages.map((msg, index) => (
-              <div 
-                key={index} 
+              <div
+                key={index}
                 className={`message ${msg.role} ${msg.isError ? 'error' : ''}`}
               >
                 <div className="message-content">
                   {msg.content}
                 </div>
                 <div className="message-timestamp">
-                  {new Date(msg.timestamp).toLocaleTimeString([], { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
+                  {new Date(msg.timestamp).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
                   })}
                 </div>
               </div>
@@ -176,8 +176,8 @@ const Chatbot = () => {
                 disabled={isLoading}
                 className="chatbot-input"
               />
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 disabled={!inputMessage.trim() || isLoading}
                 className="send-btn"
                 aria-label="Send message"
